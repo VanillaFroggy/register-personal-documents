@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  app:
+    restart: always
+    build: .
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      PORT: ${PORT}
+      DB_URL: ${DB_URL}
+    depends_on:
+      - db
+    networks:
+      - app-network
+  db:
+    image: "postgres:15-alpine"
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USER}
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  data:
