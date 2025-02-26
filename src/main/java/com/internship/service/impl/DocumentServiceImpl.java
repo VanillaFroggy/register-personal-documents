@@ -30,13 +30,6 @@ public class DocumentServiceImpl implements DocumentService {
     private final ServiceMapper mapper;
 
     @Override
-    public List<DocumentDto> getPageOfDocuments(Long userId, int pageNumber, int pageSize) {
-        return documentRepository.findAllByUserId(userId, PageRequest.of(pageNumber, pageSize))
-                .map(mapper::toDto)
-                .toList();
-    }
-
-    @Override
     public List<DocumentDto> getPageOfDocumentsByGroup(Long userId, Long groupId, int pageNumber, int pageSize) {
         return documentRepository.findAllByUserIdAndDocumentGroupId(
                         userId,
@@ -44,6 +37,13 @@ public class DocumentServiceImpl implements DocumentService {
                         PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public DocumentDto getDocumentById(Long id) {
+        return documentRepository.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(NullPointerException::new);
     }
 
     @Override

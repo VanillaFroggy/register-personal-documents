@@ -22,10 +22,25 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     private final ServiceMapper mapper;
 
     @Override
+    public List<DocumentTypeDto> getAllDocumentTypes() {
+        return documentTypeRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+    }
+
+    @Override
     public List<DocumentTypeDto> getPageOfTypes(int pageNumber, int pageSize) {
         return documentTypeRepository.findAll(PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public DocumentTypeDto getTypeById(Long id) {
+        return documentTypeRepository.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(NullPointerException::new);
     }
 
     @Override

@@ -42,17 +42,5 @@ ALTER TABLE IF EXISTS document_types
 ALTER TABLE IF EXISTS users
     ADD CONSTRAINT uc_users_username UNIQUE (username);
 
-ALTER TABLE IF EXISTS documents
-    ADD CONSTRAINT DOCUMENT_DOCUMENT_GROUP_ID_FKEY FOREIGN KEY (document_group_id) REFERENCES document_groups (id) ON DELETE CASCADE;
-
-ALTER TABLE IF EXISTS documents
-    ADD CONSTRAINT DOCUMENT_DOCUMENT_TYPE_ID_FKEY FOREIGN KEY (document_type_id) REFERENCES document_types (id) ON DELETE CASCADE;
-
-ALTER TABLE IF EXISTS document_groups
-    ADD CONSTRAINT DOCUMENT_GROUP_USER_ID_FKEY FOREIGN KEY (document_group_user_id) REFERENCES users (id) ON DELETE CASCADE;
-
-ALTER TABLE IF EXISTS documents
-    ADD CONSTRAINT DOCUMENT_USER_ID_FKEY FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE;
-
 CREATE INDEX IF NOT EXISTS idx_documents_document_group_id ON documents (document_group_id);
 CREATE INDEX IF NOT EXISTS idx_documents_date_of_issue ON documents (date_of_issue);

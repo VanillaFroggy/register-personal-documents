@@ -17,27 +17,37 @@ public class DocumentTypeController {
     private final DocumentTypeWebMapper mapper;
 
     @GetMapping("/getAll")
-    public String type(Model model, @RequestParam int pageNumber, @RequestParam int pageSize) {
-        model.addAllAttributes(documentTypeService.getPageOfTypes(pageNumber, pageSize));
+    public String getAllTypes(
+            Model model,
+            @RequestParam("pageNumber") int pageNumber,
+            @RequestParam("pageSize") int pageSize
+    ) {
+        model.addAttribute("types", documentTypeService.getPageOfTypes(pageNumber, pageSize));
         model.addAttribute("pageNumber", pageNumber);
+        return "types";
+    }
+
+    @GetMapping("/get/{id}")
+    public String getType(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("type", documentTypeService.getTypeById(id));
         return "type";
     }
 
     @PostMapping("/create")
-    public String type(Model model, @RequestBody CreateDocumentTypeRequest request) {
+    public String createType(Model model, @RequestBody CreateDocumentTypeRequest request) {
         model.addAttribute("type", documentTypeService.addType(mapper.toDto(request)));
-        return "type";
+        return "redirect:/type/getAll?pageNumber=0&pageSize=50";
     }
 
     @PutMapping("/update")
-    public String type(Model model, @RequestBody UpdateDocumentTypeRequest request) {
+    public String updateType(Model model, @RequestBody UpdateDocumentTypeRequest request) {
         model.addAttribute("type", documentTypeService.updateType(mapper.toDto(request)));
         return "type";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String type(@PathVariable Long id) {
+    public String deleteType(@PathVariable("id") Long id) {
         documentTypeService.deleteType(id);
-        return "redirect:/";
+        return "redirect:/type/getAll?pageNumber=0&pageSize=50";
     }
 }

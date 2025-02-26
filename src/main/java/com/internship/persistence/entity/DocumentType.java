@@ -1,15 +1,15 @@
 package com.internship.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
 @Entity
-@Table(name = "document_types")
-@Getter
-@EqualsAndHashCode
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "document_types")
 public class DocumentType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Documents</title>
+  <link rel="stylesheet" th:href="@{/static/main.css}">
+  <script th:src="@{/static/main.js}"></script>
+</head>
+<body>
+<button onclick="openCreationForm()">Create new document</button>
+<table>
+  <tr>
+    <td>Group</td>
+    <td>Id</td>
+    <td>Title</td>
+    <td>Type</td>
+    <td>Date of issue</td>
+    <td>Expiration date</td>
+  </tr>
+  <!--/*@thymesVar id="documents" type="java.util.List"*/-->
+  <tr th:each="document : ${documents}">
+    <!--/*@thymesVar id="document" type="com.internship.service.dto.document.DocumentDto"*/-->
+    <td th:style="'background: ' + ${document.documentGroup().color()} + ';'"
+        th:text="${document.documentGroup().name()}"></td>
+    <td th:text="${document.id()}"></td>
+    <td th:text="${document.title()}"></td>
+    <td th:text="${document.documentType().name()}"></td>
+    <td th:text="${document.dateOfIssue().toLocalDate()}"></td>
+    <td th:text="${document.expirationDate().toLocalDate()}"></td>
+  </tr>
+</table>
+<div id="creation-form" class="creation-form">
+  <h2>Create document</h2>
+  <form onsubmit="sendJsonObject(event, this, '/document/create', 'POST')">
+    <input type="text" id="userId" name="userId" th:value="${userId}" hidden="hidden">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required><br>
+    <!--/*@thymesVar id="types" type="java.util.List"*/-->
+    <label for="types">Type</label>
+    <select name="documentType" id="types">
+      <option th:each="type : ${types}" th:value="${type.id()}" th:text="${type.name()}"></option>
+    </select><br>
+    <!--/*@thymesVar id="groups" type="java.util.List"*/-->
+    <label for="groups">Group</label>
+    <select name="documentGroup" id="groups">
+      <option th:each="group : ${groups}" th:value="${group.id()}" th:text="${group.name()}"></option>
+    </select><br>
+    <label for="expirationDate">Expiration date</label>
+    <input type="date" id="expirationDate" name="expirationDate" required><br>
+    <button type="submit">Create</button>
+    <button type="button" onclick="closeCreationForm()">Close</button>
+  </form>
+</div>
+</body>
+</html>

@@ -6,8 +6,8 @@ import com.internship.persistence.repo.UserRepository;
 import com.internship.service.DocumentGroupService;
 import com.internship.service.dto.group.CreateDocumentGroupDto;
 import com.internship.service.dto.group.DocumentGroupDto;
-import com.internship.service.mapper.ServiceMapper;
 import com.internship.service.dto.group.UpdateDocumentGroupDto;
+import com.internship.service.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -24,10 +24,25 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
     private final ServiceMapper mapper;
 
     @Override
+    public List<DocumentGroupDto> getAllDocumentGroups() {
+        return documentGroupRepository.findAll()
+                .stream()
+                .map(mapper::toDto)
+                .toList();
+    }
+
+    @Override
     public List<DocumentGroupDto> getPageOfGroups(Long userId, int pageNumber, int pageSize) {
         return documentGroupRepository.findAllByUserId(userId, PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public DocumentGroupDto getGroupById(Long id) {
+        return documentGroupRepository.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(NullPointerException::new);
     }
 
     @Override

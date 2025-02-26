@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Type</title>
+    <script th:src="@{/static/main.js}"></script>
+</head>
+<body>
+<h1>Type editing</h1>
+<!--/*@thymesVar id="type" type="com.internship.service.dto.type.DocumentTypeDto"*/-->
+<form onsubmit="sendJsonObject(event, this, '/type/update', 'PUT')">
+    <label for="id">Id:</label>
+    <input type="text" th:value="${type.id()}" id="id" name="id" readonly><br>
+    <label for="name">Name:</label>
+    <input type="text" th:value="${type.name()}" id="name" name="name" required><br>
+    <label for="daysBeforeExpirationToWarnUser">Days before expiration to warn user</label>
+    <input type="number" th:value="${type.daysBeforeExpirationToWarnUser()}" id="daysBeforeExpirationToWarnUser"
+           name="daysBeforeExpirationToWarnUser" required><br>
+    <button type="submit">Save</button>
+</form>
+<a href="/type/getAll?pageNumber=0&pageSize=50">Back</a>
+</body>
+</html>

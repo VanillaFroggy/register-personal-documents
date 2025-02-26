@@ -16,33 +16,52 @@ public class DocumentGroupController {
     private final DocumentGroupService documentGroupService;
     private final DocumentGroupWebMapper mapper;
 
-    @GetMapping("/getAll")
-    public String group(
+    @GetMapping("/getAllToViewDocuments")
+    public String getAllGroupsToViewDocuments(
             Model model,
-            @RequestParam Long userId,
-            @RequestParam int pageNumber,
-            @RequestParam int pageSize
+            @RequestParam("userId") Long userId,
+            @RequestParam("pageNumber") int pageNumber,
+            @RequestParam("pageSize") int pageSize
     ) {
-        model.addAllAttributes(documentGroupService.getPageOfGroups(userId, pageNumber, pageSize));
+        model.addAttribute("groups", documentGroupService.getPageOfGroups(userId, pageNumber, pageSize));
         model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("userId", userId);
+        return "groups-to-view-documents";
+    }
+
+    @GetMapping("/getAll")
+    public String getAllGroups(
+            Model model,
+            @RequestParam("userId") Long userId,
+            @RequestParam("pageNumber") int pageNumber,
+            @RequestParam("pageSize") int pageSize
+    ) {
+        model.addAttribute("groups", documentGroupService.getPageOfGroups(userId, pageNumber, pageSize));
+        model.addAttribute("pageNumber", pageNumber);
+        return "groups";
+    }
+
+    @GetMapping("/get/{id}")
+    public String getGroup(Model model, @PathVariable("id") Long id) {
+        model.addAttribute("group", documentGroupService.getGroupById(id));
         return "group";
     }
 
     @PostMapping("/create")
-    public String group(Model model, @RequestBody CreateDocumentGroupRequest request) {
+    public String createGroup(Model model, @RequestBody CreateDocumentGroupRequest request) {
         model.addAttribute("group", documentGroupService.addGroup(mapper.toDto(request)));
-        return "group";
+        return "redirect:/group/getAll?pageNumber=0&pageSize=50";
     }
 
     @PutMapping("/update")
-    public String group(Model model, @RequestBody UpdateDocumentGroupRequest request) {
+    public String updateGroup(Model model, @RequestBody UpdateDocumentGroupRequest request) {
         model.addAttribute("group", documentGroupService.updateGroup(mapper.toDto(request)));
         return "group";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String group(@PathVariable Long id) {
+    public String deleteGroup(@PathVariable Long id) {
         documentGroupService.deleteGroup(id);
-        return "redirect:/";
+        return "redirect:/group/getAll?pageNumber=0&pageSize=50";
     }
 }

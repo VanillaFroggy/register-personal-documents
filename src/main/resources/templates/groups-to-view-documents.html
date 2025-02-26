@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Groups to view documents</title>
+    <link rel="stylesheet" th:href="@{/static/main.css}">
+    <script th:src="@{/static/main.js}"></script>
+</head>
+<body>
+<table>
+    <tbody>
+    <!--/*@thymesVar id="groups" type="java.util.List"*/-->
+    <tr th:each="group: ${groups}">
+        <!--/*@thymesVar id="group" type="com.internship.service.dto.group.DocumentGroupDto"*/-->
+        <td th:style="'background: ' + ${group.color()} + ';'">
+            <a th:href="@{|/document/getAllInGroup?userId=${userId}&groupId=${group.id()}&pageNumber=0&pageSize=50|}"
+               th:text="${group.name()}"></a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

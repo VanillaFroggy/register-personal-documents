@@ -1,18 +1,19 @@
 package com.internship.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.ZonedDateTime;
 
+@Data
 @Entity
 @Builder
-@Getter
-@EqualsAndHashCode
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "documents")

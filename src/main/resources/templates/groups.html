@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Groups</title>
+    <link rel="stylesheet" th:href="@{/static/main.css}">
+    <script th:src="@{/static/main.js}"></script>
+</head>
+<body>
+<button onclick="openCreationForm()">Create new type</button>
+<table>
+    <thead>
+    <tr>
+        <td>Id</td>
+        <td>Name</td>
+        <td>Color</td>
+        <td>Options</td>
+    </tr>
+    </thead>
+    <tbody>
+    <!--/*@thymesVar id="groups" type="java.util.List"*/-->
+    <tr th:each="group: ${groups}">
+        <!--/*@thymesVar id="group" type="com.internship.service.dto.group.DocumentGroupDto"*/-->
+        <td th:text="${group.id()}"></td>
+        <td th:text="${group.name()}"></td>
+        <td th:color="${group.color()}"></td>
+        <td>
+            <button th:onclick="|window.location.href='/group/get/' + ${group.id()}|">Edit</button>
+            <button th:onclick="|deleteEntity('/group/delete/', ${group.id()})|">Delete</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div id="creation-form" class="creation-form">
+    <h2>Create group</h2>
+    <form onsubmit="setValueOfHiddenValueWithQueryParam('userId', 'userId');
+    sendJsonObject(event, this, '/group/create', 'POST')">
+        <input type="text" id="userId" name="userId" hidden="hidden">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+        <label for="color">Color</label>
+        <input type="color" id="color" name="color" required><br>
+        <button type="submit">Create</button>
+        <button type="button" onclick="closeCreationForm()">Close</button>
+    </form>
+</div>
+</body>
+</html>

@@ -13,12 +13,6 @@ import java.util.List;
 
 @Validated
 public interface DocumentService {
-    List<DocumentDto> getPageOfDocuments(
-            @NotNull Long userId,
-            @Min(0) int pageNumber,
-            @Min(1) @Max(50) int pageSize
-    );
-
     List<DocumentDto> getPageOfDocumentsByGroup(
             @NotNull Long userId,
             @NotNull Long groupId,
@@ -26,10 +20,11 @@ public interface DocumentService {
             @Min(1) @Max(50) int pageSize
     );
 
+    DocumentDto getDocumentById(Long id);
+
     DocumentDto addDocument(@Valid CreateDocumentDto dto);
 
     DocumentDto updateDocument(@Valid UpdateDocumentDto dto);
 
     void deleteDocument(Long id);
-
 }

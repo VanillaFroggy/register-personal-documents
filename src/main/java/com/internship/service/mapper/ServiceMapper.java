@@ -11,6 +11,8 @@ import com.internship.service.dto.group.UpdateDocumentGroupDto;
 import com.internship.service.dto.type.CreateDocumentTypeDto;
 import com.internship.service.dto.type.DocumentTypeDto;
 import com.internship.service.dto.type.UpdateDocumentTypeDto;
+import com.internship.service.dto.auth.RegisterDto;
+import com.internship.service.dto.user.UserDto;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
@@ -35,4 +37,8 @@ public interface ServiceMapper {
     DocumentTypeDto toDto(DocumentType entity);
 
     DocumentType toEntity(UpdateDocumentTypeDto dto);
+
+    User toEntity(RegisterDto dto);
+
+    UserDto toDto(User user);
 }

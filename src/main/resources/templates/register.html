@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up</title>
+    <script th:src="@{/static/main.js}"></script>
+</head>
+<body>
+<div>
+    <form onsubmit="sendJsonObject(event, this, '/auth/register', 'POST')">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" required><br>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<a href="/auth/login">Back</a>
+</body>
+</html>

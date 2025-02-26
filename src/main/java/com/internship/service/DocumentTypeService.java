@@ -12,10 +12,14 @@ import java.util.List;
 
 @Validated
 public interface DocumentTypeService {
+    List<DocumentTypeDto> getAllDocumentTypes();
+
     List<DocumentTypeDto> getPageOfTypes(
             @Min(0) int pageNumber,
             @Min(1) @Max(50) int pageSize
     );
+
+    DocumentTypeDto getTypeById(Long id);
 
     DocumentTypeDto addType(@Valid CreateDocumentTypeDto dto);
 
