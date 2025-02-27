@@ -15,7 +15,7 @@ public class CustomSuccessHandler extends SavedRequestAwareAuthenticationSuccess
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
-        response.sendRedirect("/group/getAllToViewDocuments?userId="
+        response.sendRedirect("/group/getAll?userId="
                 + ((User) authentication.getPrincipal()).getId()
                 + "&pageNumber=0&pageSize=50");
     }

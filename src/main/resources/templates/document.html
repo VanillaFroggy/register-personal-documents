@@ -6,6 +6,9 @@
     <script th:src="@{/static/main.js}"></script>
 </head>
 <body>
+<form th:action="@{logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
 <h1>Document editing</h1>
 <form onsubmit="sendJsonObject(event, this, '/document/update', 'PUT')">
     <input type="text" id="id" name="id" th:value="${document.id()}" hidden="hidden">

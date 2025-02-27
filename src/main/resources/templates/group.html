@@ -6,6 +6,9 @@
     <script th:src="@{/static/main.js}"></script>
 </head>
 <body>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
 <h1>Group editing</h1>
 <!--/*@thymesVar id="group" type="com.internship.service.dto.group.DocumentGroupDto"*/-->
 <form onsubmit="sendJsonObject(event, this, '/group/update', 'PUT')">

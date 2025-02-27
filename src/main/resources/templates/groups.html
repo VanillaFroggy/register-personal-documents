@@ -7,6 +7,10 @@
     <script th:src="@{/static/main.js}"></script>
 </head>
 <body>
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Logout</button>
+</form>
+<a th:href="@{/type/getAll?pageNumber=0&pageSize=50}">Types of documents</a><br>
 <button onclick="openCreationForm()">Create new group</button>
 <table>
     <thead>
