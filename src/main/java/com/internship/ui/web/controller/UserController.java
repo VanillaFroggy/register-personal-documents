@@ -13,7 +13,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/get/{id}")
-    public String getDocument(Model model, @PathVariable("id") Long id) {
+    public String getUser(Model model, @PathVariable("id") Long id) {
         model.addAttribute("user", userService.getUserById(id));
         return "user";
     }
@@ -21,6 +21,6 @@ public class UserController {
     @DeleteMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
-        return "redirect:/";
+        return "redirect:/login?logout=true";
     }
 }

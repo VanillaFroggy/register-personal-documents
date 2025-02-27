@@ -50,7 +50,7 @@ public class DocumentController {
     @PostMapping("/create")
     public String createDocument(Model model, @RequestBody CreateDocumentRequest request) {
         model.addAttribute("document", documentService.addDocument(mapper.toDto(request)));
-        return "document";
+        return "documents";
     }
 
     @PutMapping("/update")
@@ -60,8 +60,8 @@ public class DocumentController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteDocument(@PathVariable Long id) {
+    public String deleteDocument(@PathVariable("id") Long id) {
         documentService.deleteDocument(id);
-        return "redirect:/";
+        return "documents";
     }
 }

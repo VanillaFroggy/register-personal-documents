@@ -36,7 +36,7 @@ public class DocumentTypeController {
     @PostMapping("/create")
     public String createType(Model model, @RequestBody CreateDocumentTypeRequest request) {
         model.addAttribute("type", documentTypeService.addType(mapper.toDto(request)));
-        return "redirect:/type/getAll?pageNumber=0&pageSize=50";
+        return "types";
     }
 
     @PutMapping("/update")
@@ -48,6 +48,6 @@ public class DocumentTypeController {
     @DeleteMapping("/delete/{id}")
     public String deleteType(@PathVariable("id") Long id) {
         documentTypeService.deleteType(id);
-        return "redirect:/type/getAll?pageNumber=0&pageSize=50";
+        return "types";
     }
 }

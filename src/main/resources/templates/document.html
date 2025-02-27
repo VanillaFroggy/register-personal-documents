@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script th:src="@{/static/main.js}"></script>
+</head>
+<body>
+<h1>Document editing</h1>
+<form onsubmit="sendJsonObject(event, this, '/document/update', 'PUT')">
+    <input type="text" id="id" name="id" th:value="${document.id()}" hidden="hidden">
+    <input type="text" id="userId" name="userId" th:value="${document.userId()}" hidden="hidden">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" th:value="${document.title()}" required><br>
+    <!--/*@thymesVar id="types" type="java.util.List"*/-->
+    <label for="types">Type:</label>
+    <select name="documentTypeId" id="types">
+        <option th:each="type : ${types}" th:value="${type.id()}" th:text="${type.name()}"
+                th:selected="${document.documentType().id() == type.id()}"></option>
+    </select><br>
+    <!--/*@thymesVar id="groups" type="java.util.List"*/-->
+    <label for="groups">Group:</label>
+    <select name="documentGroupId" id="groups">
+        <option th:each="group : ${groups}" th:value="${group.id()}" th:text="${group.name()}"
+                th:selected="${document.documentGroup().id() == group.id()}"></option>
+    </select><br>
+    <label for="dateOfIssue">Date of issue:</label>
+    <input type="date" id="dateOfIssue" name="dateOfIssue" th:value="${document.dateOfIssue().toLocalDate()}"
+           readonly><br>
+    <label for="expirationDate">Expiration date:</label>
+    <input type="date" id="expirationDate" name="expirationDate"
+           th:value="${document.expirationDate().toLocalDate()}" required><br>
+    <button type="submit">Submit</button>
+    <button type="button" onclick="closeCreationForm()">Close</button>
+</form>
+<a th:href="@{|/document/getAllInGroup?userId=${document.userId()}&groupId=${document.documentGroup().id()}&pageNumber=0&pageSize=50|}">Back</a>
+</body>
+</html>

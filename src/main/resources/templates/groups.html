@@ -7,13 +7,11 @@
     <script th:src="@{/static/main.js}"></script>
 </head>
 <body>
-<button onclick="openCreationForm()">Create new type</button>
+<button onclick="openCreationForm()">Create new group</button>
 <table>
     <thead>
     <tr>
-        <td>Id</td>
-        <td>Name</td>
-        <td>Color</td>
+        <td>Group</td>
         <td>Options</td>
     </tr>
     </thead>
@@ -21,9 +19,10 @@
     <!--/*@thymesVar id="groups" type="java.util.List"*/-->
     <tr th:each="group: ${groups}">
         <!--/*@thymesVar id="group" type="com.internship.service.dto.group.DocumentGroupDto"*/-->
-        <td th:text="${group.id()}"></td>
-        <td th:text="${group.name()}"></td>
-        <td th:color="${group.color()}"></td>
+        <td th:style="'background: ' + ${group.color()} + ';'">
+            <a th:href="@{|/document/getAllInGroup?userId=${userId}&groupId=${group.id()}&pageNumber=0&pageSize=50|}"
+               th:text="${group.name()}"></a>
+        </td>
         <td>
             <button th:onclick="|window.location.href='/group/get/' + ${group.id()}|">Edit</button>
             <button th:onclick="|deleteEntity('/group/delete/', ${group.id()})|">Delete</button>
@@ -38,7 +37,7 @@
         <input type="text" id="userId" name="userId" hidden="hidden">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br>
-        <label for="color">Color</label>
+        <label for="color">Color:</label>
         <input type="color" id="color" name="color" required><br>
         <button type="submit">Create</button>
         <button type="button" onclick="closeCreationForm()">Close</button>

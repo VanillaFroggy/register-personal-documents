@@ -17,7 +17,16 @@ function closeCreationForm() {
 function sendJsonObject(event, form, url, method) {
     event.preventDefault();
     const formData = new FormData(form);
-    const jsonObject = Object.fromEntries(formData.entries());
+    let jsonObject = {};
+    formData.forEach((value, key) => {
+        if (key.includes("date") || key.includes("Date")) {
+            jsonObject[key] = new Date(value).toISOString();
+        } else if (form[key] && form[key].tagName === "SELECT") {
+            jsonObject[key] = form[key].value;
+        } else {
+            jsonObject[key] = value;
+        }
+    });
     fetch(url, {
         method: method,
         headers: {"Content-Type": "application/json"},

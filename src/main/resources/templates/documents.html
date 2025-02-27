@@ -16,6 +16,7 @@
     <td>Type</td>
     <td>Date of issue</td>
     <td>Expiration date</td>
+    <td>Options</td>
   </tr>
   <!--/*@thymesVar id="documents" type="java.util.List"*/-->
   <tr th:each="document : ${documents}">
@@ -27,6 +28,10 @@
     <td th:text="${document.documentType().name()}"></td>
     <td th:text="${document.dateOfIssue().toLocalDate()}"></td>
     <td th:text="${document.expirationDate().toLocalDate()}"></td>
+    <td>
+      <button th:onclick="|window.location.href='/document/get/' + ${document.id()}|">Edit</button>
+      <button th:onclick="|deleteEntity('/document/delete/', ${document.id()})|">Delete</button>
+    </td>
   </tr>
 </table>
 <div id="creation-form" class="creation-form">
@@ -36,16 +41,16 @@
     <label for="title">Title:</label>
     <input type="text" id="title" name="title" required><br>
     <!--/*@thymesVar id="types" type="java.util.List"*/-->
-    <label for="types">Type</label>
-    <select name="documentType" id="types">
+    <label for="types">Type:</label>
+    <select name="documentTypeId" id="types">
       <option th:each="type : ${types}" th:value="${type.id()}" th:text="${type.name()}"></option>
     </select><br>
     <!--/*@thymesVar id="groups" type="java.util.List"*/-->
-    <label for="groups">Group</label>
-    <select name="documentGroup" id="groups">
+    <label for="groups">Group:</label>
+    <select name="documentGroupId" id="groups">
       <option th:each="group : ${groups}" th:value="${group.id()}" th:text="${group.name()}"></option>
     </select><br>
-    <label for="expirationDate">Expiration date</label>
+    <label for="expirationDate">Expiration date:</label>
     <input type="date" id="expirationDate" name="expirationDate" required><br>
     <button type="submit">Create</button>
     <button type="button" onclick="closeCreationForm()">Close</button>

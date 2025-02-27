@@ -66,6 +66,18 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public DocumentDto updateDocument(UpdateDocumentDto dto) {
         Document document = mapper.toEntity(dto);
+        document.setDocumentType(
+                documentTypeRepository.findById(dto.documentTypeId())
+                        .orElseThrow(NullPointerException::new)
+        );
+        document.setDocumentGroup(
+                documentGroupRepository.findById(dto.documentGroupId())
+                        .orElseThrow(NullPointerException::new)
+        );
+        document.setUser(
+                userRepository.findById(dto.userId())
+                        .orElseThrow(NullPointerException::new)
+        );
         documentRepository.save(document);
         return mapper.toDto(document);
     }

@@ -60,6 +60,10 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
     @Override
     public DocumentGroupDto updateGroup(UpdateDocumentGroupDto dto) {
         DocumentGroup documentGroup = mapper.toEntity(dto);
+        documentGroup.setUser(
+                userRepository.findById(dto.userId())
+                        .orElseThrow(NullPointerException::new)
+        );
         documentGroupRepository.save(documentGroup);
         return mapper.toDto(documentGroup);
     }

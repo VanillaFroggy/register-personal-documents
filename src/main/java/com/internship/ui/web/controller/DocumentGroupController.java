@@ -16,19 +16,6 @@ public class DocumentGroupController {
     private final DocumentGroupService documentGroupService;
     private final DocumentGroupWebMapper mapper;
 
-    @GetMapping("/getAllToViewDocuments")
-    public String getAllGroupsToViewDocuments(
-            Model model,
-            @RequestParam("userId") Long userId,
-            @RequestParam("pageNumber") int pageNumber,
-            @RequestParam("pageSize") int pageSize
-    ) {
-        model.addAttribute("groups", documentGroupService.getPageOfGroups(userId, pageNumber, pageSize));
-        model.addAttribute("pageNumber", pageNumber);
-        model.addAttribute("userId", userId);
-        return "groups-to-view-documents";
-    }
-
     @GetMapping("/getAll")
     public String getAllGroups(
             Model model,
@@ -38,6 +25,7 @@ public class DocumentGroupController {
     ) {
         model.addAttribute("groups", documentGroupService.getPageOfGroups(userId, pageNumber, pageSize));
         model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("userId", userId);
         return "groups";
     }
 
@@ -50,7 +38,7 @@ public class DocumentGroupController {
     @PostMapping("/create")
     public String createGroup(Model model, @RequestBody CreateDocumentGroupRequest request) {
         model.addAttribute("group", documentGroupService.addGroup(mapper.toDto(request)));
-        return "redirect:/group/getAll?pageNumber=0&pageSize=50";
+        return "groups";
     }
 
     @PutMapping("/update")
@@ -60,8 +48,8 @@ public class DocumentGroupController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteGroup(@PathVariable Long id) {
+    public String deleteGroup(@PathVariable("id") Long id) {
         documentGroupService.deleteGroup(id);
-        return "redirect:/group/getAll?pageNumber=0&pageSize=50";
+        return "groups";
     }
 }

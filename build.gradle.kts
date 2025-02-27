@@ -35,6 +35,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-web")
     implementation("org.springframework.security:spring-security-config")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.18.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2")
     implementation("org.apache.tomcat.embed:tomcat-embed-core:11.0.4")
     implementation("org.apache.tomcat.embed:tomcat-embed-jasper:11.0.4")
     implementation("org.slf4j:slf4j-api")
