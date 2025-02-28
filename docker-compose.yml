@@ -9,8 +9,9 @@ services:
     env_file:
       - .env
     environment:
-      PORT: ${PORT}
       DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
     depends_on:
       - db
     networks:
