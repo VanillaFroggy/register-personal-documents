@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
+    @Query("select d from Document as d where d.user.id = :userId")
+    Page<Document> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
+
     @Query("select d from Document as d where d.user.id = :userId and d.documentGroup.id = :documentGroupId" +
             " order by d.dateOfIssue desc")
     Page<Document> findAllByUserIdAndDocumentGroupId(

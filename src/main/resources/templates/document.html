@@ -34,7 +34,6 @@
     <input type="date" id="expirationDate" name="expirationDate"
            th:value="${document.expirationDate().toLocalDate()}" required><br>
     <button type="submit">Submit</button>
-    <button type="button" onclick="closeCreationForm()">Close</button>
 </form>
 <a th:href="@{|/document/getAllInGroup?userId=${document.userId()}&groupId=${document.documentGroup().id()}&pageNumber=0&pageSize=50|}">Back</a>
 </body>

@@ -39,6 +39,15 @@ public class DocumentController {
         return "documents";
     }
 
+    @GetMapping("/getAllToRenew")
+    public String getAllDocumentsToRenew(Model model, @RequestParam("userId") Long userId) {
+        model.addAttribute("documents", documentService.getAllDocumentsToRenew(userId));
+        model.addAttribute("userId", userId);
+        model.addAttribute("groups", documentGroupService.getAllDocumentGroups());
+        model.addAttribute("types", documentTypeService.getAllDocumentTypes());
+        return "documents";
+    }
+
     @GetMapping("/get/{id}")
     public String getDocument(Model model, @PathVariable("id") Long id) {
         model.addAttribute("document", documentService.getDocumentById(id));

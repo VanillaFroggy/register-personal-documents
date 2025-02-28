@@ -13,12 +13,16 @@ import java.util.List;
 
 @Validated
 public interface DocumentService {
+    boolean hasDocumentsToRenew(Long userId);
+
     List<DocumentDto> getPageOfDocumentsByGroup(
             @NotNull Long userId,
             @NotNull Long groupId,
             @Min(0) int pageNumber,
             @Min(1) @Max(50) int pageSize
     );
+
+    List<DocumentDto> getAllDocumentsToRenew(Long userId);
 
     DocumentDto getDocumentById(Long id);
 

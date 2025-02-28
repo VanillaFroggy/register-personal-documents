@@ -11,12 +11,15 @@ import com.internship.service.dto.document.DocumentDto;
 import com.internship.service.dto.document.UpdateDocumentDto;
 import com.internship.service.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,6 +33,27 @@ public class DocumentServiceImpl implements DocumentService {
     private final ServiceMapper mapper;
 
     @Override
+    public boolean hasDocumentsToRenew(Long userId) {
+        boolean hasDocumentsToRenew = false;
+        int pageNumber = 0;
+        Page<Document> documents = documentRepository.findAllByUserId(
+                userId,
+                PageRequest.of(pageNumber, 100)
+        );
+        do {
+            if (documents.stream().anyMatch(document ->
+                    ChronoUnit.DAYS.between(document.getDateOfIssue(), document.getExpirationDate())
+                            <= document.getDocumentType().getDaysBeforeExpirationToWarnUser())
+            ) {
+                hasDocumentsToRenew = true;
+                break;
+            }
+            documents = documentRepository.findAllByUserId(userId, PageRequest.of(++pageNumber, 100));
+        } while (documents.hasContent() && !documents.isLast());
+        return hasDocumentsToRenew;
+    }
+
+    @Override
     public List<DocumentDto> getPageOfDocumentsByGroup(Long userId, Long groupId, int pageNumber, int pageSize) {
         return documentRepository.findAllByUserIdAndDocumentGroupId(
                         userId,
@@ -37,6 +61,28 @@ public class DocumentServiceImpl implements DocumentService {
                         PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
                 .toList();
+    }
+
+    @Override
+    public List<DocumentDto> getAllDocumentsToRenew(Long userId) {
+        int pageNumber = 0;
+        Page<Document> documents = documentRepository.findAllByUserId(
+                userId,
+                PageRequest.of(pageNumber, 1_000)
+        );
+        List<DocumentDto> documentsToRenew = new ArrayList<>();
+        do {
+            documentsToRenew.addAll(
+                    documents.stream()
+                            .filter(document ->
+                                    ChronoUnit.DAYS.between(document.getDateOfIssue(), document.getExpirationDate())
+                                            <= document.getDocumentType().getDaysBeforeExpirationToWarnUser())
+                            .map(mapper::toDto)
+                            .toList()
+            );
+            documents = documentRepository.findAllByUserId(userId, PageRequest.of(++pageNumber, 1_000));
+        } while (documents.hasContent() && !documents.isLast() && documentsToRenew.isEmpty());
+        return documentsToRenew;
     }
 
     @Override

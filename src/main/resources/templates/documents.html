@@ -10,8 +10,13 @@
 <form th:action="@{/logout}" method="post">
   <button type="submit">Logout</button>
 </form>
-<a th:href="@{|/group/getAll?userId=${userId}&pageNumber=0&pageSize=50|}">Back</a><br>
-<button onclick="openCreationForm()">Create new document</button>
+<a th:href="@{|/group/getAll?userId=${userId}&pageNumber=0&pageSize=50|}">To groups</a><br>
+<button id="button-to-create" onclick="openCreationForm()">Create new document</button>
+<script>
+  if (window.location.href.includes("getAllToRenew")) {
+    document.getElementById("button-to-create").style.display = "none";
+  }
+</script>
 <table>
   <tr>
     <td>Group</td>
