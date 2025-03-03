@@ -1,14 +1,12 @@
 package com.internship.ui.web.controller;
 
-import com.internship.persistence.entity.User;
 import com.internship.service.AuthService;
 import com.internship.service.DocumentService;
 import com.internship.ui.web.dto.auth.RegisterRequest;
 import com.internship.ui.web.mapper.AuthWebMapper;
-import jakarta.servlet.http.Cookie;
+import com.internship.ui.web.utils.WebUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,19 +28,12 @@ public class AuthController {
 
     @GetMapping("/success")
     public String loginSuccess(HttpServletResponse response) {
-        Long userId = ((User) SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getPrincipal())
-                .getId();
-        Cookie cookie = new Cookie(
+        WebUtils.addCookieToResponse(
+                response,
                 "hasDocumentsToRenew",
-                String.valueOf(documentService.hasDocumentsToRenew(userId))
+                String.valueOf(documentService.hasDocumentsToRenew())
         );
-        cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setMaxAge(60 * 60 * 24);
-        response.addCookie(cookie);
-        return String.format("redirect:/group/getAll?userId=%d&pageNumber=0&pageSize=50", userId);
+        return "redirect:/group/getAll?pageNumber=0&pageSize=50";
     }
 
     @GetMapping("/register")

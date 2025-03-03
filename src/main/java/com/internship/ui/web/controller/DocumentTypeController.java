@@ -1,12 +1,10 @@
 package com.internship.ui.web.controller;
 
-import com.internship.persistence.entity.User;
 import com.internship.service.DocumentTypeService;
 import com.internship.ui.web.dto.type.CreateDocumentTypeRequest;
 import com.internship.ui.web.dto.type.UpdateDocumentTypeRequest;
 import com.internship.ui.web.mapper.DocumentTypeWebMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +22,6 @@ public class DocumentTypeController {
             @RequestParam("pageNumber") int pageNumber,
             @RequestParam("pageSize") int pageSize
     ) {
-        model.addAttribute(
-                "userId",
-                ((User) SecurityContextHolder.getContext()
-                        .getAuthentication()
-                        .getPrincipal())
-                        .getId()
-        );
         model.addAttribute("types", documentTypeService.getPageOfTypes(pageNumber, pageSize));
         model.addAttribute("pageNumber", pageNumber);
         return "types";

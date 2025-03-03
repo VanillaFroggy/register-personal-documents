@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotNull;
 public record UpdateDocumentGroupDto(
         @NotNull Long id,
         @NotNull String name,
-        @NotNull String color,
-        @NotNull Long userId
+        @NotNull String color
 ) {
 }

@@ -7,7 +7,6 @@ public record UpdateDocumentRequest(
         String title,
         ZonedDateTime dateOfIssue,
         ZonedDateTime expirationDate,
-        Long userId,
         Long documentTypeId,
         Long documentGroupId
 ) {

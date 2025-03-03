@@ -11,11 +11,11 @@
     <button type="submit">Logout</button>
 </form>
 <div id="warning-link" style="display: none">
-    <a th:href="@{|/document/getAllToRenew?userId=${userId}|}" style="color: red">
+    <a th:href="@{/document/getAllToRenew}" style="color: red">
         You have documents should've been renewed
     </a>
 </div>
-<a th:href="@{|/group/getAll?userId=${userId}&pageNumber=0&pageSize=50|}">To groups</a><br>
+<a th:href="@{/group/getAll?pageNumber=0&pageSize=50}">To groups</a><br>
 <button onclick="openCreationForm()">Create new type</button>
 <table>
     <thead>

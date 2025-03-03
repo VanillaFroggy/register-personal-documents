@@ -1,6 +1,7 @@
 package com.internship;
 
 import com.internship.config.AppConfig;
+import com.internship.config.WebConfig;
 import com.internship.config.auth.SecurityConfig;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
@@ -18,7 +19,7 @@ public class Application {
         tomcat.setPort(8080);
         tomcat.getConnector();
         AnnotationConfigWebApplicationContext applicationContext = new AnnotationConfigWebApplicationContext();
-        applicationContext.register(AppConfig.class, SecurityConfig.class);
+        applicationContext.register(AppConfig.class, SecurityConfig.class, WebConfig.class);
         Context ctx = tomcat.addContext("/", new File(".").getAbsolutePath());
         DispatcherServlet dispatcherServlet = new DispatcherServlet(applicationContext);
         Tomcat.addServlet(ctx, "dispatcherServlet", dispatcherServlet)

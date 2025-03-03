@@ -19,13 +19,11 @@ public class DocumentGroupController {
     @GetMapping("/getAll")
     public String getAllGroups(
             Model model,
-            @RequestParam("userId") Long userId,
             @RequestParam("pageNumber") int pageNumber,
             @RequestParam("pageSize") int pageSize
     ) {
-        model.addAttribute("groups", documentGroupService.getPageOfGroups(userId, pageNumber, pageSize));
+        model.addAttribute("groups", documentGroupService.getPageOfGroups(pageNumber, pageSize));
         model.addAttribute("pageNumber", pageNumber);
-        model.addAttribute("userId", userId);
         return "groups";
     }
 

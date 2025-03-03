@@ -9,6 +9,11 @@
 <form th:action="@{/logout}" method="post">
     <button type="submit">Logout</button>
 </form>
+<div id="warning-link" style="display: none">
+    <a th:href="@{/document/getAllToRenew}" style="color: red">
+        You have documents should've been renewed
+    </a>
+</div>
 <h1>Type editing</h1>
 <!--/*@thymesVar id="type" type="com.internship.service.dto.type.DocumentTypeDto"*/-->
 <form onsubmit="sendJsonObject(event, this, '/type/update', 'PUT')">

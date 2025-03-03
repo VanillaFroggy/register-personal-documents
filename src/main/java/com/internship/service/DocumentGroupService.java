@@ -16,18 +16,14 @@ public interface DocumentGroupService {
 
     List<DocumentGroupDto> getAllDocumentGroups();
 
-    List<DocumentGroupDto> getPageOfGroups(
-            @NotNull Long userId,
-            @Min(0) int pageNumber,
-            @Min(1) @Max(50) int pageSize
-    );
+    List<DocumentGroupDto> getPageOfGroups(@Min(0) int pageNumber, @Min(1) @Max(50) int pageSize);
 
-    DocumentGroupDto getGroupById(Long id);
+    DocumentGroupDto getGroupById(@NotNull Long id);
 
     DocumentGroupDto addGroup(@Valid CreateDocumentGroupDto dto);
 
     DocumentGroupDto updateGroup(@Valid UpdateDocumentGroupDto dto);
 
-    void deleteGroup(Long id);
+    void deleteGroup(@NotNull Long id);
 
 }

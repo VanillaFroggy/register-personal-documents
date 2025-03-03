@@ -6,6 +6,7 @@ import com.internship.persistence.repo.DocumentRepository;
 import com.internship.persistence.repo.DocumentTypeRepository;
 import com.internship.persistence.repo.UserRepository;
 import com.internship.service.DocumentService;
+import com.internship.service.utils.Utils;
 import com.internship.service.dto.document.CreateDocumentDto;
 import com.internship.service.dto.document.DocumentDto;
 import com.internship.service.dto.document.UpdateDocumentDto;
@@ -33,9 +34,10 @@ public class DocumentServiceImpl implements DocumentService {
     private final ServiceMapper mapper;
 
     @Override
-    public boolean hasDocumentsToRenew(Long userId) {
+    public boolean hasDocumentsToRenew() {
         boolean hasDocumentsToRenew = false;
         int pageNumber = 0;
+        Long userId = Utils.getCurrentUserId();
         Page<Document> documents = documentRepository.findAllByUserId(
                 userId,
                 PageRequest.of(pageNumber, 100)
@@ -54,9 +56,9 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<DocumentDto> getPageOfDocumentsByGroup(Long userId, Long groupId, int pageNumber, int pageSize) {
+    public List<DocumentDto> getPageOfDocumentsByGroup(Long groupId, int pageNumber, int pageSize) {
         return documentRepository.findAllByUserIdAndDocumentGroupId(
-                        userId,
+                        Utils.getCurrentUserId(),
                         groupId,
                         PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
@@ -64,8 +66,9 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<DocumentDto> getAllDocumentsToRenew(Long userId) {
+    public List<DocumentDto> getAllDocumentsToRenew() {
         int pageNumber = 0;
+        Long userId = Utils.getCurrentUserId();
         Page<Document> documents = documentRepository.findAllByUserId(
                 userId,
                 PageRequest.of(pageNumber, 1_000)
@@ -100,10 +103,10 @@ public class DocumentServiceImpl implements DocumentService {
                         .orElseThrow(NullPointerException::new))
                 .documentType(documentTypeRepository.findById(dto.documentTypeId())
                         .orElseThrow(NullPointerException::new))
-                .user(userRepository.findById(dto.userId())
+                .user(userRepository.findById(Utils.getCurrentUserId())
                         .orElseThrow(NullPointerException::new))
                 .dateOfIssue(ZonedDateTime.now(ZoneOffset.UTC))
-                .expirationDate(dto.expirationDate())
+                .expirationDate(dto.expirationDate().withZoneSameInstant(ZoneOffset.UTC))
                 .build();
         documentRepository.save(document);
         return mapper.toDto(document);
@@ -121,7 +124,7 @@ public class DocumentServiceImpl implements DocumentService {
                         .orElseThrow(NullPointerException::new)
         );
         document.setUser(
-                userRepository.findById(dto.userId())
+                userRepository.findById(Utils.getCurrentUserId())
                         .orElseThrow(NullPointerException::new)
         );
         documentRepository.save(document);

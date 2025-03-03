@@ -11,7 +11,7 @@
     <button type="submit">Logout</button>
 </form>
 <div id="warning-link" style="display: none">
-    <a th:href="@{|/document/getAllToRenew?userId=${userId}|}" style="color: red">
+    <a th:href="@{/document/getAllToRenew}" style="color: red">
         You have documents should've been renewed
     </a>
 </div>
@@ -29,7 +29,7 @@
     <tr th:each="group: ${groups}">
         <!--/*@thymesVar id="group" type="com.internship.service.dto.group.DocumentGroupDto"*/-->
         <td th:style="'background: ' + ${group.color()} + ';'">
-            <a th:href="@{|/document/getAllInGroup?userId=${userId}&groupId=${group.id()}&pageNumber=0&pageSize=50|}"
+            <a th:href="@{|/document/getAllInGroup?groupId=${group.id()}&pageNumber=0&pageSize=50|}"
                th:text="${group.name()}"></a>
         </td>
         <td>
@@ -41,9 +41,7 @@
 </table>
 <div id="creation-form" class="creation-form">
     <h2>Create group</h2>
-    <form onsubmit="setValueOfHiddenValueWithQueryParam('userId', 'userId');
-    sendJsonObject(event, this, '/group/create', 'POST')">
-        <input type="text" id="userId" name="userId" hidden="hidden">
+    <form onsubmit="sendJsonObject(event, this, '/group/create', 'POST')">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required><br>
         <label for="color">Color:</label>

@@ -15,8 +15,18 @@ import com.internship.service.dto.auth.RegisterDto;
 import com.internship.service.dto.user.UserDto;
 import org.mapstruct.*;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ServiceMapper {
+    @Named("mapZonedDateTime")
+    default ZonedDateTime mapZonedDateTime(ZonedDateTime zonedDateTime) {
+        return zonedDateTime.withZoneSameInstant(ZoneOffset.UTC);
+    }
+
+    @Mapping(target = "dateOfIssue", source = "dateOfIssue", qualifiedByName = "mapZonedDateTime")
+    @Mapping(target = "expirationDate", source = "expirationDate", qualifiedByName = "mapZonedDateTime")
     Document toEntity(UpdateDocumentDto dto);
 
     @Named("mapUserId")
@@ -24,10 +34,10 @@ public interface ServiceMapper {
         return user.getId();
     }
 
-    @Mapping(target = "userId", source = "entity.user", qualifiedByName = "mapUserId")
+    @Mapping(target = "userId", source = "user", qualifiedByName = "mapUserId")
     DocumentDto toDto(Document entity);
 
-    @Mapping(target = "userId", source = "entity.user", qualifiedByName = "mapUserId")
+    @Mapping(target = "userId", source = "user", qualifiedByName = "mapUserId")
     DocumentGroupDto toDto(DocumentGroup entity);
 
     DocumentGroup toEntity(UpdateDocumentGroupDto dto);

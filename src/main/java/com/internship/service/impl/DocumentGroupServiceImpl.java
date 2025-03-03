@@ -4,6 +4,7 @@ import com.internship.persistence.entity.DocumentGroup;
 import com.internship.persistence.repo.DocumentGroupRepository;
 import com.internship.persistence.repo.UserRepository;
 import com.internship.service.DocumentGroupService;
+import com.internship.service.utils.Utils;
 import com.internship.service.dto.group.CreateDocumentGroupDto;
 import com.internship.service.dto.group.DocumentGroupDto;
 import com.internship.service.dto.group.UpdateDocumentGroupDto;
@@ -25,15 +26,15 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
 
     @Override
     public List<DocumentGroupDto> getAllDocumentGroups() {
-        return documentGroupRepository.findAll()
+        return documentGroupRepository.findAllByUserId(Utils.getCurrentUserId())
                 .stream()
                 .map(mapper::toDto)
                 .toList();
     }
 
     @Override
-    public List<DocumentGroupDto> getPageOfGroups(Long userId, int pageNumber, int pageSize) {
-        return documentGroupRepository.findAllByUserId(userId, PageRequest.of(pageNumber, pageSize))
+    public List<DocumentGroupDto> getPageOfGroups(int pageNumber, int pageSize) {
+        return documentGroupRepository.findAllByUserId(Utils.getCurrentUserId(), PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
                 .toList();
     }
@@ -50,7 +51,7 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
         DocumentGroup documentGroup = DocumentGroup.builder()
                 .name(dto.name())
                 .color(dto.color())
-                .user(userRepository.findById(dto.userId())
+                .user(userRepository.findById(Utils.getCurrentUserId())
                         .orElseThrow(NullPointerException::new))
                 .build();
         documentGroupRepository.save(documentGroup);
@@ -61,7 +62,7 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
     public DocumentGroupDto updateGroup(UpdateDocumentGroupDto dto) {
         DocumentGroup documentGroup = mapper.toEntity(dto);
         documentGroup.setUser(
-                userRepository.findById(dto.userId())
+                userRepository.findById(Utils.getCurrentUserId())
                         .orElseThrow(NullPointerException::new)
         );
         documentGroupRepository.save(documentGroup);

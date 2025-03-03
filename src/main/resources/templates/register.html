@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Sign up</title>
-    <script th:src="@{/static/main.js}"></script>
 </head>
 <body>
 <div>
@@ -14,6 +13,19 @@
         <input type="text" id="password" name="password" required><br>
         <button type="submit">Submit</button>
     </form>
+    <script>
+        function sendJsonObject(event, form, url, method) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            let jsonObject = Object.fromEntries(formData.entries());
+            fetch(url, {
+                method: method,
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(jsonObject)
+            }).then((response) => window.location.href = response.url)
+                .catch(error => console.error(error));
+        }
+    </script>
 </div>
 <a href="/auth/login">Back</a>
 </body>

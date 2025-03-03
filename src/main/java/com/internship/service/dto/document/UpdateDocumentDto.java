@@ -10,7 +10,6 @@ public record UpdateDocumentDto(
         @NotNull String title,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime dateOfIssue,
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime expirationDate,
-        @NotNull Long userId,
         @NotNull Long documentTypeId,
         @NotNull Long documentGroupId
 ) {

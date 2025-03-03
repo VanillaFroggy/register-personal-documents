@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 public record CreateDocumentDto(
-        @NotNull Long userId,
         @NotNull String title,
         @NotNull Long documentTypeId,
         @NotNull Long documentGroupId,

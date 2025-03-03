@@ -9,10 +9,14 @@
 <form th:action="@{logout}" method="post">
     <button type="submit">Logout</button>
 </form>
+<div id="warning-link" style="display: none">
+    <a th:href="@{/document/getAllToRenew}" style="color: red">
+        You have documents should've been renewed
+    </a>
+</div>
 <h1>Document editing</h1>
 <form onsubmit="sendJsonObject(event, this, '/document/update', 'PUT')">
     <input type="text" id="id" name="id" th:value="${document.id()}" hidden="hidden">
-    <input type="text" id="userId" name="userId" th:value="${document.userId()}" hidden="hidden">
     <label for="title">Title:</label>
     <input type="text" id="title" name="title" th:value="${document.title()}" required><br>
     <!--/*@thymesVar id="types" type="java.util.List"*/-->
@@ -35,6 +39,6 @@
            th:value="${document.expirationDate().toLocalDate()}" required><br>
     <button type="submit">Submit</button>
 </form>
-<a th:href="@{|/document/getAllInGroup?userId=${document.userId()}&groupId=${document.documentGroup().id()}&pageNumber=0&pageSize=50|}">Back</a>
+<a th:href="@{|/document/getAllInGroup?groupId=${document.documentGroup().id()}&pageNumber=0&pageSize=50|}">Back</a>
 </body>
 </html>

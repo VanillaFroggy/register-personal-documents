@@ -9,7 +9,6 @@ import com.internship.service.DocumentService;
 import com.internship.service.dto.auth.RegisterDto;
 import com.internship.service.dto.document.CreateDocumentDto;
 import com.internship.service.dto.group.CreateDocumentGroupDto;
-import com.internship.service.dto.user.UserDto;
 import com.internship.service.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final ServiceMapper mapper;
 
     @Override
-    public UserDto register(RegisterDto dto) {
+    public void register(RegisterDto dto) {
         if (userRepository.findByUsername(dto.username()).isPresent()) {
             throw new IllegalArgumentException("Username is already in use");
         }
@@ -41,19 +40,16 @@ public class AuthServiceImpl implements AuthService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         documentService.addDocument(new CreateDocumentDto(
-                user.getId(),
                 "Пароль",
                 typeRepository.findByName("Пароль")
                         .orElseThrow(NullPointerException::new)
                         .getId(),
                 documentGroupService.addGroup(new CreateDocumentGroupDto(
-                        user.getId(),
                         "All",
                         "#FFFFFF"
                 )).id(),
                 ZonedDateTime.now(ZoneOffset.UTC).plusDays(60)
         ));
-        return mapper.toDto(user);
     }
 
     @Override
