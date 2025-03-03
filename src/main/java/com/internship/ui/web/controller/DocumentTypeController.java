@@ -20,16 +20,23 @@ public class DocumentTypeController {
     public String getAllTypes(
             Model model,
             @RequestParam("pageNumber") int pageNumber,
-            @RequestParam("pageSize") int pageSize
+            @RequestParam("pageSize") int pageSize,
+            @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) {
         model.addAttribute("types", documentTypeService.getPageOfTypes(pageNumber, pageSize));
         model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "types";
     }
 
     @GetMapping("/get/{id}")
-    public String getType(Model model, @PathVariable("id") Long id) {
+    public String getType(
+            Model model,
+            @PathVariable("id") Long id,
+            @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
+    ) {
         model.addAttribute("type", documentTypeService.getTypeById(id));
+        model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "type";
     }
 

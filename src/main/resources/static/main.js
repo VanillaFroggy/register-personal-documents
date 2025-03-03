@@ -1,22 +1,5 @@
-document.addEventListener("DOMContentLoaded", function () {
-    hasDocumentsToRenew();
-})
-
-function hasDocumentsToRenew() {
-    let hasDocumentsToRenew = document.cookie.split('; ')
-        .find(row => row.startsWith("hasDocumentsToRenew"));
-    if (hasDocumentsToRenew && hasDocumentsToRenew.split('=')[1] === 'true'
-        && document.getElementById("warning-link")) {
-        document.getElementById("warning-link").style.display = "block";
-    }
-}
-
 function openCreationForm() {
     document.getElementById("creation-form").style.display = "block";
-}
-
-function setValueOfHiddenValueWithQueryParam(id, paramName) {
-    document.getElementById(id).value = getQueryParamValue(paramName);
 }
 
 function getQueryParamValue(name) {

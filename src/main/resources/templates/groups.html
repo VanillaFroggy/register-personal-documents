@@ -10,7 +10,7 @@
 <form th:action="@{/logout}" method="post">
     <button type="submit">Logout</button>
 </form>
-<div id="warning-link" style="display: none">
+<div th:if="${hasDocumentsToRenew}">
     <a th:href="@{/document/getAllToRenew}" style="color: red">
         You have documents should've been renewed
     </a>

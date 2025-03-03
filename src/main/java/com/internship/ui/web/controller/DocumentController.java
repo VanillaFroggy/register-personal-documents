@@ -6,8 +6,7 @@ import com.internship.service.DocumentTypeService;
 import com.internship.ui.web.dto.document.CreateDocumentRequest;
 import com.internship.ui.web.dto.document.UpdateDocumentRequest;
 import com.internship.ui.web.mapper.DocumentWebMapper;
-import com.internship.ui.web.utils.WebUtils;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,7 +26,8 @@ public class DocumentController {
             Model model,
             @RequestParam("groupId") Long groupId,
             @RequestParam("pageNumber") int pageNumber,
-            @RequestParam("pageSize") int pageSize
+            @RequestParam("pageSize") int pageSize,
+            @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) {
         model.addAttribute(
                 "documents",
@@ -36,6 +36,7 @@ public class DocumentController {
         model.addAttribute("groups", documentGroupService.getAllDocumentGroups());
         model.addAttribute("types", documentTypeService.getAllDocumentTypes());
         model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "documents";
     }
 
@@ -48,10 +49,15 @@ public class DocumentController {
     }
 
     @GetMapping("/get/{id}")
-    public String getDocument(Model model, @PathVariable("id") Long id) {
+    public String getDocument(
+            Model model,
+            @PathVariable("id") Long id,
+            @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
+    ) {
         model.addAttribute("document", documentService.getDocumentById(id));
         model.addAttribute("groups", documentGroupService.getAllDocumentGroups());
         model.addAttribute("types", documentTypeService.getAllDocumentTypes());
+        model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "document";
     }
 
@@ -64,15 +70,11 @@ public class DocumentController {
     @PutMapping("/update")
     public String updateDocument(
             Model model,
-            HttpServletResponse response,
+            HttpSession session,
             @RequestBody UpdateDocumentRequest request
     ) {
         model.addAttribute("document", documentService.updateDocument(mapper.toDto(request)));
-        WebUtils.addCookieToResponse(
-                response,
-                "hasDocumentsToRenew",
-                String.valueOf(documentService.hasDocumentsToRenew())
-        );
+        session.setAttribute("hasDocumentsToRenew", documentService.hasDocumentsToRenew());
         return "document";
     }
 

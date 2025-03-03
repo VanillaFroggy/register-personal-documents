@@ -4,8 +4,7 @@ import com.internship.service.AuthService;
 import com.internship.service.DocumentService;
 import com.internship.ui.web.dto.auth.RegisterRequest;
 import com.internship.ui.web.mapper.AuthWebMapper;
-import com.internship.ui.web.utils.WebUtils;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,12 +26,8 @@ public class AuthController {
     }
 
     @GetMapping("/success")
-    public String loginSuccess(HttpServletResponse response) {
-        WebUtils.addCookieToResponse(
-                response,
-                "hasDocumentsToRenew",
-                String.valueOf(documentService.hasDocumentsToRenew())
-        );
+    public String loginSuccess(HttpSession session) {
+        session.setAttribute("hasDocumentsToRenew", documentService.hasDocumentsToRenew());
         return "redirect:/group/getAll?pageNumber=0&pageSize=50";
     }
 

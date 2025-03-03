@@ -20,16 +20,23 @@ public class DocumentGroupController {
     public String getAllGroups(
             Model model,
             @RequestParam("pageNumber") int pageNumber,
-            @RequestParam("pageSize") int pageSize
+            @RequestParam("pageSize") int pageSize,
+            @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) {
         model.addAttribute("groups", documentGroupService.getPageOfGroups(pageNumber, pageSize));
         model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "groups";
     }
 
     @GetMapping("/get/{id}")
-    public String getGroup(Model model, @PathVariable("id") Long id) {
+    public String getGroup(
+            Model model,
+            @PathVariable("id") Long id,
+            @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
+    ) {
         model.addAttribute("group", documentGroupService.getGroupById(id));
+        model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "group";
     }
 
