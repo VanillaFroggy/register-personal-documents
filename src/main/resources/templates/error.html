@@ -5,13 +5,8 @@
     <title>Error</title>
 </head>
 <body>
-<h1>Что-то пошло не так</h1>
+<h1>Something's wrong</h1>
 <p th:text="${errorMessage}" style="color: red"></p>
-<div th:if="${previousUrl != null}">
-    <a th:href="${previousUrl}">Back</a>
-</div>
-<div th:if="${previousUrl == null}">
-    <a th:href="@{/group/getAll?pageNumber=0&pageSize=50}">To main page</a>
-</div>
+<a th:href="@{/group/getAll?pageNumber=0&pageSize=50}">To main page</a>
 </body>
 </html>

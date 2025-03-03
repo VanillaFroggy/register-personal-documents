@@ -11,7 +11,11 @@ public class GlobalExceptionHandler {
             Exception e,
             HttpSession session
     ) {
-        session.setAttribute("errorMessage", e.getMessage());
+        if (e.getMessage() != null) {
+            session.setAttribute("errorMessage", e.getMessage());
+        } else {
+            session.setAttribute("errorMessage", e.getCause().getMessage());
+        }
         return "redirect:/error";
     }
 }

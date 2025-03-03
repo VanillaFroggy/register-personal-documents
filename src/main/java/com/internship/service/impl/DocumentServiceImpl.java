@@ -12,6 +12,7 @@ import com.internship.service.dto.document.DocumentDto;
 import com.internship.service.dto.document.UpdateDocumentDto;
 import com.internship.service.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -88,11 +89,13 @@ public class DocumentServiceImpl implements DocumentService {
         return documentsToRenew;
     }
 
+    @SneakyThrows
     @Override
     public DocumentDto getDocumentById(Long id) {
-        return documentRepository.findById(id)
-                .map(mapper::toDto)
+        Document document = documentRepository.findById(id)
                 .orElseThrow(NullPointerException::new);
+        doesUserOwnDocument(document);
+        return mapper.toDto(document);
     }
 
     @Override
@@ -112,9 +115,13 @@ public class DocumentServiceImpl implements DocumentService {
         return mapper.toDto(document);
     }
 
+    @SneakyThrows
     @Override
     public DocumentDto updateDocument(UpdateDocumentDto dto) {
-        Document document = mapper.toEntity(dto);
+        Document document = documentRepository.findById(dto.id())
+                .orElseThrow(NullPointerException::new);
+        doesUserOwnDocument(document);
+        document = mapper.toEntity(dto);
         document.setDocumentType(
                 documentTypeRepository.findById(dto.documentTypeId())
                         .orElseThrow(NullPointerException::new)
@@ -131,8 +138,18 @@ public class DocumentServiceImpl implements DocumentService {
         return mapper.toDto(document);
     }
 
+    @SneakyThrows
     @Override
     public void deleteDocument(Long id) {
-        documentRepository.deleteById(id);
+        Document document = documentRepository.findById(id)
+                .orElseThrow(NullPointerException::new);
+        doesUserOwnDocument(document);
+        documentRepository.delete(document);
+    }
+
+    private static void doesUserOwnDocument(Document document) throws IllegalAccessException {
+        if (!document.getUser().getId().equals(Utils.getCurrentUserId())) {
+            throw new IllegalAccessException("This is not your document");
+        }
     }
 }

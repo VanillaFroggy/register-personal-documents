@@ -10,6 +10,7 @@ import com.internship.service.dto.group.DocumentGroupDto;
 import com.internship.service.dto.group.UpdateDocumentGroupDto;
 import com.internship.service.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,11 +40,13 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
                 .toList();
     }
 
+    @SneakyThrows
     @Override
     public DocumentGroupDto getGroupById(Long id) {
-        return documentGroupRepository.findById(id)
-                .map(mapper::toDto)
+        DocumentGroup documentGroup = documentGroupRepository.findById(id)
                 .orElseThrow(NullPointerException::new);
+        doesUserOwnDocumentGroup(documentGroup);
+        return mapper.toDto(documentGroup);
     }
 
     @Override
@@ -58,9 +61,13 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
         return mapper.toDto(documentGroup);
     }
 
+    @SneakyThrows
     @Override
     public DocumentGroupDto updateGroup(UpdateDocumentGroupDto dto) {
-        DocumentGroup documentGroup = mapper.toEntity(dto);
+        DocumentGroup documentGroup = documentGroupRepository.findById(dto.id())
+                .orElseThrow(NullPointerException::new);
+        doesUserOwnDocumentGroup(documentGroup);
+        documentGroup = mapper.toEntity(dto);
         documentGroup.setUser(
                 userRepository.findById(Utils.getCurrentUserId())
                         .orElseThrow(NullPointerException::new)
@@ -69,8 +76,18 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
         return mapper.toDto(documentGroup);
     }
 
+    @SneakyThrows
     @Override
     public void deleteGroup(Long id) {
-        documentGroupRepository.deleteById(id);
+        DocumentGroup documentGroup = documentGroupRepository.findById(id)
+                .orElseThrow(NullPointerException::new);
+        doesUserOwnDocumentGroup(documentGroup);
+        documentGroupRepository.delete(documentGroup);
+    }
+
+    private static void doesUserOwnDocumentGroup(DocumentGroup documentGroup) throws IllegalAccessException {
+        if (!documentGroup.getUser().getId().equals(Utils.getCurrentUserId())) {
+            throw new IllegalAccessException("This is not your document group");
+        }
     }
 }
