@@ -6,13 +6,14 @@ import com.internship.persistence.repo.DocumentRepository;
 import com.internship.persistence.repo.DocumentTypeRepository;
 import com.internship.persistence.repo.UserRepository;
 import com.internship.service.DocumentService;
-import com.internship.service.utils.Utils;
 import com.internship.service.dto.document.CreateDocumentDto;
 import com.internship.service.dto.document.DocumentDto;
 import com.internship.service.dto.document.UpdateDocumentDto;
+import com.internship.service.exceptoin.AccessException;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.service.mapper.ServiceMapper;
+import com.internship.service.utils.Utils;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class DocumentServiceImpl implements DocumentService {
     private final ServiceMapper mapper;
 
     @Override
+    @Transactional(readOnly = true)
     public boolean hasDocumentsToRenew() {
         boolean hasDocumentsToRenew = false;
         int pageNumber = 0;
@@ -57,6 +59,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DocumentDto> getPageOfDocumentsByGroup(Long groupId, int pageNumber, int pageSize) {
         return documentRepository.findAllByUserIdAndDocumentGroupId(
                         Utils.getCurrentUserId(),
@@ -67,6 +70,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DocumentDto> getAllDocumentsToRenew() {
         int pageNumber = 0;
         Long userId = Utils.getCurrentUserId();
@@ -89,25 +93,25 @@ public class DocumentServiceImpl implements DocumentService {
         return documentsToRenew;
     }
 
-    @SneakyThrows
     @Override
-    public DocumentDto getDocumentById(Long id) {
+    @Transactional(readOnly = true)
+    public DocumentDto getDocumentById(Long id) throws AccessException, NotFoundException {
         Document document = documentRepository.findById(id)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         doesUserOwnDocument(document);
         return mapper.toDto(document);
     }
 
     @Override
-    public DocumentDto addDocument(CreateDocumentDto dto) {
+    public DocumentDto addDocument(CreateDocumentDto dto) throws NotFoundException {
         Document document = Document.builder()
                 .title(dto.title())
                 .documentGroup(documentGroupRepository.findById(dto.documentGroupId())
-                        .orElseThrow(NullPointerException::new))
+                        .orElseThrow(NotFoundException::new))
                 .documentType(documentTypeRepository.findById(dto.documentTypeId())
-                        .orElseThrow(NullPointerException::new))
+                        .orElseThrow(NotFoundException::new))
                 .user(userRepository.findById(Utils.getCurrentUserId())
-                        .orElseThrow(NullPointerException::new))
+                        .orElseThrow(NotFoundException::new))
                 .dateOfIssue(ZonedDateTime.now(ZoneOffset.UTC))
                 .expirationDate(dto.expirationDate().withZoneSameInstant(ZoneOffset.UTC))
                 .build();
@@ -115,41 +119,39 @@ public class DocumentServiceImpl implements DocumentService {
         return mapper.toDto(document);
     }
 
-    @SneakyThrows
     @Override
-    public DocumentDto updateDocument(UpdateDocumentDto dto) {
+    public DocumentDto updateDocument(UpdateDocumentDto dto) throws AccessException, NotFoundException {
         Document document = documentRepository.findById(dto.id())
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         doesUserOwnDocument(document);
         document = mapper.toEntity(dto);
         document.setDocumentType(
                 documentTypeRepository.findById(dto.documentTypeId())
-                        .orElseThrow(NullPointerException::new)
+                        .orElseThrow(NotFoundException::new)
         );
         document.setDocumentGroup(
                 documentGroupRepository.findById(dto.documentGroupId())
-                        .orElseThrow(NullPointerException::new)
+                        .orElseThrow(NotFoundException::new)
         );
         document.setUser(
                 userRepository.findById(Utils.getCurrentUserId())
-                        .orElseThrow(NullPointerException::new)
+                        .orElseThrow(NotFoundException::new)
         );
         documentRepository.save(document);
         return mapper.toDto(document);
     }
 
-    @SneakyThrows
     @Override
-    public void deleteDocument(Long id) {
+    public void deleteDocument(Long id) throws AccessException, NotFoundException {
         Document document = documentRepository.findById(id)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         doesUserOwnDocument(document);
         documentRepository.delete(document);
     }
 
-    private static void doesUserOwnDocument(Document document) throws IllegalAccessException {
+    private static void doesUserOwnDocument(Document document) throws AccessException {
         if (!document.getUser().getId().equals(Utils.getCurrentUserId())) {
-            throw new IllegalAccessException("This is not your document");
+            throw new AccessException("This is not your document");
         }
     }
 }

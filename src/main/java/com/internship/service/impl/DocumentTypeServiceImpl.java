@@ -6,6 +6,7 @@ import com.internship.service.DocumentTypeService;
 import com.internship.service.dto.type.CreateDocumentTypeDto;
 import com.internship.service.dto.type.DocumentTypeDto;
 import com.internship.service.dto.type.UpdateDocumentTypeDto;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.service.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +23,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     private final ServiceMapper mapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DocumentTypeDto> getAllDocumentTypes() {
         return documentTypeRepository.findAll()
                 .stream()
@@ -30,6 +32,7 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DocumentTypeDto> getPageOfTypes(int pageNumber, int pageSize) {
         return documentTypeRepository.findAll(PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
@@ -37,10 +40,11 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     }
 
     @Override
-    public DocumentTypeDto getTypeById(Long id) {
+    @Transactional(readOnly = true)
+    public DocumentTypeDto getTypeById(Long id) throws NotFoundException {
         return documentTypeRepository.findById(id)
                 .map(mapper::toDto)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
     }
 
     @Override

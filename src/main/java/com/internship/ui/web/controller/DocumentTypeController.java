@@ -1,6 +1,7 @@
 package com.internship.ui.web.controller;
 
 import com.internship.service.DocumentTypeService;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.ui.web.dto.type.CreateDocumentTypeRequest;
 import com.internship.ui.web.dto.type.UpdateDocumentTypeRequest;
 import com.internship.ui.web.mapper.DocumentTypeWebMapper;
@@ -34,7 +35,7 @@ public class DocumentTypeController {
             Model model,
             @PathVariable("id") Long id,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
-    ) {
+    ) throws NotFoundException {
         model.addAttribute("type", documentTypeService.getTypeById(id));
         model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "type";

@@ -3,6 +3,8 @@ package com.internship.ui.web.controller;
 import com.internship.service.DocumentGroupService;
 import com.internship.service.DocumentService;
 import com.internship.service.DocumentTypeService;
+import com.internship.service.exceptoin.AccessException;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.ui.web.dto.document.CreateDocumentRequest;
 import com.internship.ui.web.dto.document.UpdateDocumentRequest;
 import com.internship.ui.web.mapper.DocumentWebMapper;
@@ -53,7 +55,7 @@ public class DocumentController {
             Model model,
             @PathVariable("id") Long id,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
-    ) {
+    ) throws AccessException, NotFoundException {
         model.addAttribute("document", documentService.getDocumentById(id));
         model.addAttribute("groups", documentGroupService.getAllDocumentGroups());
         model.addAttribute("types", documentTypeService.getAllDocumentTypes());
@@ -62,7 +64,7 @@ public class DocumentController {
     }
 
     @PostMapping("/create")
-    public String createDocument(Model model, @RequestBody CreateDocumentRequest request) {
+    public String createDocument(Model model, @RequestBody CreateDocumentRequest request) throws NotFoundException {
         model.addAttribute("document", documentService.addDocument(mapper.toDto(request)));
         return "documents";
     }
@@ -72,14 +74,14 @@ public class DocumentController {
             Model model,
             HttpSession session,
             @RequestBody UpdateDocumentRequest request
-    ) {
+    ) throws AccessException, NotFoundException {
         model.addAttribute("document", documentService.updateDocument(mapper.toDto(request)));
         session.setAttribute("hasDocumentsToRenew", documentService.hasDocumentsToRenew());
         return "document";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteDocument(@PathVariable("id") Long id) {
+    public String deleteDocument(@PathVariable("id") Long id) throws AccessException, NotFoundException {
         documentService.deleteDocument(id);
         return "documents";
     }

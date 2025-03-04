@@ -3,6 +3,8 @@ package com.internship.service;
 import com.internship.service.dto.group.CreateDocumentGroupDto;
 import com.internship.service.dto.group.DocumentGroupDto;
 import com.internship.service.dto.group.UpdateDocumentGroupDto;
+import com.internship.service.exceptoin.AccessException;
+import com.internship.service.exceptoin.NotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -18,12 +20,12 @@ public interface DocumentGroupService {
 
     List<DocumentGroupDto> getPageOfGroups(@Min(0) int pageNumber, @Min(1) @Max(50) int pageSize);
 
-    DocumentGroupDto getGroupById(@NotNull Long id);
+    DocumentGroupDto getGroupById(@NotNull Long id) throws AccessException, NotFoundException;
 
-    DocumentGroupDto addGroup(@Valid CreateDocumentGroupDto dto);
+    DocumentGroupDto addGroup(@Valid CreateDocumentGroupDto dto) throws NotFoundException;
 
-    DocumentGroupDto updateGroup(@Valid UpdateDocumentGroupDto dto);
+    DocumentGroupDto updateGroup(@Valid UpdateDocumentGroupDto dto) throws AccessException, NotFoundException;
 
-    void deleteGroup(@NotNull Long id);
+    void deleteGroup(@NotNull Long id) throws AccessException, NotFoundException;
 
 }

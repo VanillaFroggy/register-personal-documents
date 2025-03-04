@@ -2,6 +2,7 @@ package com.internship.ui.web.controller;
 
 import com.internship.service.AuthService;
 import com.internship.service.DocumentService;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.ui.web.dto.auth.RegisterRequest;
 import com.internship.ui.web.mapper.AuthWebMapper;
 import jakarta.servlet.http.HttpSession;
@@ -37,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
+    public String register(@RequestBody RegisterRequest request) throws NotFoundException {
         authService.register(mapper.toDto(request));
         return "redirect:/auth/login";
     }

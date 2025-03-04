@@ -3,6 +3,8 @@ package com.internship.service;
 import com.internship.service.dto.document.CreateDocumentDto;
 import com.internship.service.dto.document.DocumentDto;
 import com.internship.service.dto.document.UpdateDocumentDto;
+import com.internship.service.exceptoin.AccessException;
+import com.internship.service.exceptoin.NotFoundException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -23,11 +25,11 @@ public interface DocumentService {
 
     List<DocumentDto> getAllDocumentsToRenew();
 
-    DocumentDto getDocumentById(@NotNull Long id);
+    DocumentDto getDocumentById(@NotNull Long id) throws AccessException, NotFoundException;
 
-    DocumentDto addDocument(@Valid CreateDocumentDto dto);
+    DocumentDto addDocument(@Valid CreateDocumentDto dto) throws NotFoundException;
 
-    DocumentDto updateDocument(@Valid UpdateDocumentDto dto);
+    DocumentDto updateDocument(@Valid UpdateDocumentDto dto) throws AccessException, NotFoundException;
 
-    void deleteDocument(@NotNull Long id);
+    void deleteDocument(@NotNull Long id) throws AccessException, NotFoundException;
 }

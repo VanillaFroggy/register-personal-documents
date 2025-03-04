@@ -1,6 +1,8 @@
 package com.internship.ui.web.controller;
 
 import com.internship.service.DocumentGroupService;
+import com.internship.service.exceptoin.AccessException;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.ui.web.dto.group.CreateDocumentGroupRequest;
 import com.internship.ui.web.dto.group.UpdateDocumentGroupRequest;
 import com.internship.ui.web.mapper.DocumentGroupWebMapper;
@@ -34,26 +36,26 @@ public class DocumentGroupController {
             Model model,
             @PathVariable("id") Long id,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
-    ) {
+    ) throws AccessException, NotFoundException {
         model.addAttribute("group", documentGroupService.getGroupById(id));
         model.addAttribute("hasDocumentsToRenew", hasDocumentsToRenew);
         return "group";
     }
 
     @PostMapping("/create")
-    public String createGroup(Model model, @RequestBody CreateDocumentGroupRequest request) {
+    public String createGroup(Model model, @RequestBody CreateDocumentGroupRequest request) throws NotFoundException {
         model.addAttribute("group", documentGroupService.addGroup(mapper.toDto(request)));
         return "groups";
     }
 
     @PutMapping("/update")
-    public String updateGroup(Model model, @RequestBody UpdateDocumentGroupRequest request) {
+    public String updateGroup(Model model, @RequestBody UpdateDocumentGroupRequest request) throws AccessException, NotFoundException {
         model.addAttribute("group", documentGroupService.updateGroup(mapper.toDto(request)));
         return "group";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteGroup(@PathVariable("id") Long id) {
+    public String deleteGroup(@PathVariable("id") Long id) throws AccessException, NotFoundException {
         documentGroupService.deleteGroup(id);
         return "groups";
     }

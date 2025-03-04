@@ -4,13 +4,14 @@ import com.internship.persistence.entity.DocumentGroup;
 import com.internship.persistence.repo.DocumentGroupRepository;
 import com.internship.persistence.repo.UserRepository;
 import com.internship.service.DocumentGroupService;
-import com.internship.service.utils.Utils;
 import com.internship.service.dto.group.CreateDocumentGroupDto;
 import com.internship.service.dto.group.DocumentGroupDto;
 import com.internship.service.dto.group.UpdateDocumentGroupDto;
+import com.internship.service.exceptoin.AccessException;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.service.mapper.ServiceMapper;
+import com.internship.service.utils.Utils;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
     private final ServiceMapper mapper;
 
     @Override
+    @Transactional(readOnly = true)
     public List<DocumentGroupDto> getAllDocumentGroups() {
         return documentGroupRepository.findAllByUserId(Utils.getCurrentUserId())
                 .stream()
@@ -34,60 +36,59 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<DocumentGroupDto> getPageOfGroups(int pageNumber, int pageSize) {
         return documentGroupRepository.findAllByUserId(Utils.getCurrentUserId(), PageRequest.of(pageNumber, pageSize))
                 .map(mapper::toDto)
                 .toList();
     }
 
-    @SneakyThrows
     @Override
-    public DocumentGroupDto getGroupById(Long id) {
+    @Transactional(readOnly = true)
+    public DocumentGroupDto getGroupById(Long id) throws AccessException, NotFoundException {
         DocumentGroup documentGroup = documentGroupRepository.findById(id)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         doesUserOwnDocumentGroup(documentGroup);
         return mapper.toDto(documentGroup);
     }
 
     @Override
-    public DocumentGroupDto addGroup(CreateDocumentGroupDto dto) {
+    public DocumentGroupDto addGroup(CreateDocumentGroupDto dto) throws NotFoundException {
         DocumentGroup documentGroup = DocumentGroup.builder()
                 .name(dto.name())
                 .color(dto.color())
                 .user(userRepository.findById(Utils.getCurrentUserId())
-                        .orElseThrow(NullPointerException::new))
+                        .orElseThrow(NotFoundException::new))
                 .build();
         documentGroupRepository.save(documentGroup);
         return mapper.toDto(documentGroup);
     }
 
-    @SneakyThrows
     @Override
-    public DocumentGroupDto updateGroup(UpdateDocumentGroupDto dto) {
+    public DocumentGroupDto updateGroup(UpdateDocumentGroupDto dto) throws AccessException, NotFoundException {
         DocumentGroup documentGroup = documentGroupRepository.findById(dto.id())
                 .orElseThrow(NullPointerException::new);
         doesUserOwnDocumentGroup(documentGroup);
         documentGroup = mapper.toEntity(dto);
         documentGroup.setUser(
                 userRepository.findById(Utils.getCurrentUserId())
-                        .orElseThrow(NullPointerException::new)
+                        .orElseThrow(NotFoundException::new)
         );
         documentGroupRepository.save(documentGroup);
         return mapper.toDto(documentGroup);
     }
 
-    @SneakyThrows
     @Override
-    public void deleteGroup(Long id) {
+    public void deleteGroup(Long id) throws AccessException, NotFoundException {
         DocumentGroup documentGroup = documentGroupRepository.findById(id)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         doesUserOwnDocumentGroup(documentGroup);
         documentGroupRepository.delete(documentGroup);
     }
 
-    private static void doesUserOwnDocumentGroup(DocumentGroup documentGroup) throws IllegalAccessException {
+    private static void doesUserOwnDocumentGroup(DocumentGroup documentGroup) throws AccessException {
         if (!documentGroup.getUser().getId().equals(Utils.getCurrentUserId())) {
-            throw new IllegalAccessException("This is not your document group");
+            throw new AccessException("This is not your document group");
         }
     }
 }

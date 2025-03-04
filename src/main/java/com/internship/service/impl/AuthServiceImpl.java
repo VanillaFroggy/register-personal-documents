@@ -9,6 +9,7 @@ import com.internship.persistence.repo.DocumentTypeRepository;
 import com.internship.persistence.repo.UserRepository;
 import com.internship.service.AuthService;
 import com.internship.service.dto.auth.RegisterDto;
+import com.internship.service.exceptoin.NotFoundException;
 import com.internship.service.mapper.ServiceMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final ServiceMapper mapper;
 
     @Override
-    public void register(RegisterDto dto) {
+    public void register(RegisterDto dto) throws NotFoundException {
         if (userRepository.findByUsername(dto.username()).isPresent()) {
             throw new IllegalArgumentException("Username is already in use");
         }
@@ -49,7 +50,7 @@ public class AuthServiceImpl implements AuthService {
                 .title("Пароль")
                 .documentGroup(documentGroup)
                 .documentType(typeRepository.findByName("Пароль")
-                        .orElseThrow(NullPointerException::new))
+                        .orElseThrow(NotFoundException::new))
                 .user(user)
                 .dateOfIssue(ZonedDateTime.now(ZoneOffset.UTC))
                 .expirationDate(ZonedDateTime.now(ZoneOffset.UTC).plusDays(60))
@@ -58,8 +59,9 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(() -> new UsernameNotFoundException("User with name " + username + "does not exist"));
     }
 }
