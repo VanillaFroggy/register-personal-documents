@@ -133,10 +133,6 @@ public class DocumentServiceImpl implements DocumentService {
                 documentGroupRepository.findById(dto.documentGroupId())
                         .orElseThrow(NotFoundException::new)
         );
-        document.setUser(
-                userRepository.findById(Utils.getCurrentUserId())
-                        .orElseThrow(NotFoundException::new)
-        );
         documentRepository.save(document);
         return mapper.toDto(document);
     }

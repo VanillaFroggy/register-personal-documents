@@ -67,13 +67,9 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
     @Override
     public DocumentGroupDto updateGroup(UpdateDocumentGroupDto dto) throws AccessException, NotFoundException {
         DocumentGroup documentGroup = documentGroupRepository.findById(dto.id())
-                .orElseThrow(NullPointerException::new);
+                .orElseThrow(NotFoundException::new);
         doesUserOwnDocumentGroup(documentGroup);
         documentGroup = mapper.toEntity(dto);
-        documentGroup.setUser(
-                userRepository.findById(Utils.getCurrentUserId())
-                        .orElseThrow(NotFoundException::new)
-        );
         documentGroupRepository.save(documentGroup);
         return mapper.toDto(documentGroup);
     }
