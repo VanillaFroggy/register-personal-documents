@@ -10,7 +10,6 @@ public record DocumentDto(
         String title,
         ZonedDateTime dateOfIssue,
         ZonedDateTime expirationDate,
-        Long userId,
         DocumentTypeDto documentType,
         DocumentGroupDto documentGroup
 ) {
