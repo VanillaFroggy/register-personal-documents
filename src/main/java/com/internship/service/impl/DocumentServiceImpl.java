@@ -1,6 +1,7 @@
 package com.internship.service.impl;
 
 import com.internship.persistence.entity.Document;
+import com.internship.persistence.entity.User;
 import com.internship.persistence.repo.DocumentGroupRepository;
 import com.internship.persistence.repo.DocumentRepository;
 import com.internship.persistence.repo.DocumentTypeRepository;
@@ -124,6 +125,7 @@ public class DocumentServiceImpl implements DocumentService {
         Document document = documentRepository.findById(dto.id())
                 .orElseThrow(NotFoundException::new);
         doesUserOwnDocument(document);
+        User user = document.getUser();
         document = mapper.toEntity(dto);
         document.setDocumentType(
                 documentTypeRepository.findById(dto.documentTypeId())
@@ -133,6 +135,7 @@ public class DocumentServiceImpl implements DocumentService {
                 documentGroupRepository.findById(dto.documentGroupId())
                         .orElseThrow(NotFoundException::new)
         );
+        document.setUser(user);
         documentRepository.save(document);
         return mapper.toDto(document);
     }

@@ -1,6 +1,7 @@
 package com.internship.service.impl;
 
 import com.internship.persistence.entity.DocumentGroup;
+import com.internship.persistence.entity.User;
 import com.internship.persistence.repo.DocumentGroupRepository;
 import com.internship.persistence.repo.UserRepository;
 import com.internship.service.DocumentGroupService;
@@ -69,7 +70,9 @@ public class DocumentGroupServiceImpl implements DocumentGroupService {
         DocumentGroup documentGroup = documentGroupRepository.findById(dto.id())
                 .orElseThrow(NotFoundException::new);
         doesUserOwnDocumentGroup(documentGroup);
+        User user = documentGroup.getUser();
         documentGroup = mapper.toEntity(dto);
+        documentGroup.setUser(user);
         documentGroupRepository.save(documentGroup);
         return mapper.toDto(documentGroup);
     }
