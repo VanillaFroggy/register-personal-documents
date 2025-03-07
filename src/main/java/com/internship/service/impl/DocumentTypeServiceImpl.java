@@ -55,7 +55,10 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
     }
 
     @Override
-    public DocumentTypeDto updateType(UpdateDocumentTypeDto dto) {
+    public DocumentTypeDto updateType(UpdateDocumentTypeDto dto) throws NotFoundException {
+        if (documentTypeRepository.findById(dto.id()).isEmpty()) {
+            throw new NotFoundException();
+        }
         DocumentType documentType = mapper.toEntity(dto);
         documentTypeRepository.save(documentType);
         return mapper.toDto(documentType);

@@ -48,7 +48,7 @@ public class DocumentTypeController {
     }
 
     @PutMapping("/update")
-    public String updateType(Model model, @RequestBody UpdateDocumentTypeRequest request) {
+    public String updateType(Model model, @RequestBody UpdateDocumentTypeRequest request) throws NotFoundException {
         model.addAttribute("type", documentTypeService.updateType(mapper.toDto(request)));
         return "type";
     }

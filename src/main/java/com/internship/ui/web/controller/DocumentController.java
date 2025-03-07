@@ -81,8 +81,9 @@ public class DocumentController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteDocument(@PathVariable("id") Long id) throws AccessException, NotFoundException {
+    public String deleteDocument(HttpSession session, @PathVariable("id") Long id) throws AccessException, NotFoundException {
         documentService.deleteDocument(id);
+        session.setAttribute("hasDocumentsToRenew", documentService.hasDocumentsToRenew());
         return "documents";
     }
 }

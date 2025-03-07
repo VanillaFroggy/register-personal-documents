@@ -22,7 +22,7 @@ public interface DocumentTypeService {
 
     DocumentTypeDto addType(@Valid CreateDocumentTypeDto dto);
 
-    DocumentTypeDto updateType(@Valid UpdateDocumentTypeDto dto);
+    DocumentTypeDto updateType(@Valid UpdateDocumentTypeDto dto) throws NotFoundException;
 
     void deleteType(@NotNull Long id);
 }
