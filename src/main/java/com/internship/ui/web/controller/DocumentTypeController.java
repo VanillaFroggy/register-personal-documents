@@ -24,8 +24,8 @@ public class DocumentTypeController {
     @GetMapping("/getAll")
     public String getAllTypes(
             Model model,
-            @RequestParam("pageNumber") @Min(0) @Max(50) int pageNumber,
-            @RequestParam("pageSize") @Positive int pageSize,
+            @RequestParam("pageNumber") @PositiveOrZero int pageNumber,
+            @RequestParam("pageSize") @Min(1) @Max(50) int pageSize,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) {
         model.addAttribute("types", documentTypeService.getPageOfTypes(pageNumber, pageSize));
