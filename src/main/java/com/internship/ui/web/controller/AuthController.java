@@ -43,6 +43,11 @@ public class AuthController {
     @PostMapping("/register")
     public String register(@RequestBody @Valid RegisterRequest request) throws NotFoundException {
         authService.register(mapper.toDto(request));
-        return "redirect:/auth/login";
+        return "redirect:/auth/register-success";
+    }
+
+    @GetMapping("/register-success")
+    public String registerSuccess() {
+        return "register-success";
     }
 }
