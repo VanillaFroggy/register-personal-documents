@@ -7,6 +7,7 @@ import com.internship.persistence.entity.User;
 import com.internship.service.dto.auth.RegisterDto;
 import com.internship.service.dto.document.DocumentDto;
 import com.internship.service.dto.document.UpdateDocumentDto;
+import com.internship.service.dto.group.CreateDocumentGroupDto;
 import com.internship.service.dto.group.DocumentGroupDto;
 import com.internship.service.dto.group.UpdateDocumentGroupDto;
 import com.internship.service.dto.type.CreateDocumentTypeDto;
@@ -31,6 +32,8 @@ public interface ServiceMapper {
     DocumentDto toDto(Document entity);
 
     DocumentGroupDto toDto(DocumentGroup entity);
+
+    DocumentGroup toEntity(CreateDocumentGroupDto dto);
 
     DocumentGroup toEntity(UpdateDocumentGroupDto dto);
 
