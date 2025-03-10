@@ -5,11 +5,15 @@ import com.internship.service.exceptoin.NotFoundException;
 import com.internship.ui.web.dto.type.CreateDocumentTypeRequest;
 import com.internship.ui.web.dto.type.UpdateDocumentTypeRequest;
 import com.internship.ui.web.mapper.DocumentTypeWebMapper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @Controller
 @RequestMapping("/type")
 @RequiredArgsConstructor
@@ -20,8 +24,8 @@ public class DocumentTypeController {
     @GetMapping("/getAll")
     public String getAllTypes(
             Model model,
-            @RequestParam("pageNumber") int pageNumber,
-            @RequestParam("pageSize") int pageSize,
+            @RequestParam("pageNumber") @Min(0) @Max(50) int pageNumber,
+            @RequestParam("pageSize") @Positive int pageSize,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) {
         model.addAttribute("types", documentTypeService.getPageOfTypes(pageNumber, pageSize));
@@ -33,7 +37,7 @@ public class DocumentTypeController {
     @GetMapping("/get/{id}")
     public String getType(
             Model model,
-            @PathVariable("id") Long id,
+            @PathVariable("id") @NotNull @Positive Long id,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) throws NotFoundException {
         model.addAttribute("type", documentTypeService.getTypeById(id));
@@ -42,19 +46,19 @@ public class DocumentTypeController {
     }
 
     @PostMapping("/create")
-    public String createType(Model model, @RequestBody CreateDocumentTypeRequest request) {
+    public String createType(Model model, @RequestBody @Valid CreateDocumentTypeRequest request) {
         model.addAttribute("type", documentTypeService.addType(mapper.toDto(request)));
         return "types";
     }
 
     @PutMapping("/update")
-    public String updateType(Model model, @RequestBody UpdateDocumentTypeRequest request) throws NotFoundException {
+    public String updateType(Model model, @RequestBody @Valid UpdateDocumentTypeRequest request) throws NotFoundException {
         model.addAttribute("type", documentTypeService.updateType(mapper.toDto(request)));
         return "type";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteType(@PathVariable("id") Long id) {
+    public String deleteType(@PathVariable("id") @NotNull @Positive Long id) {
         documentTypeService.deleteType(id);
         return "types";
     }

@@ -6,11 +6,15 @@ import com.internship.service.exceptoin.NotFoundException;
 import com.internship.ui.web.dto.group.CreateDocumentGroupRequest;
 import com.internship.ui.web.dto.group.UpdateDocumentGroupRequest;
 import com.internship.ui.web.mapper.DocumentGroupWebMapper;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @Controller
 @RequestMapping("/group")
 @RequiredArgsConstructor
@@ -21,8 +25,8 @@ public class DocumentGroupController {
     @GetMapping("/getAll")
     public String getAllGroups(
             Model model,
-            @RequestParam("pageNumber") int pageNumber,
-            @RequestParam("pageSize") int pageSize,
+            @RequestParam("pageNumber") @Min(0) @Max(50) int pageNumber,
+            @RequestParam("pageSize") @Positive int pageSize,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) {
         model.addAttribute("groups", documentGroupService.getPageOfGroups(pageNumber, pageSize));
@@ -34,7 +38,7 @@ public class DocumentGroupController {
     @GetMapping("/get/{id}")
     public String getGroup(
             Model model,
-            @PathVariable("id") Long id,
+            @PathVariable("id") @NotNull @Positive Long id,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) throws AccessException, NotFoundException {
         model.addAttribute("group", documentGroupService.getGroupById(id));
@@ -43,19 +47,22 @@ public class DocumentGroupController {
     }
 
     @PostMapping("/create")
-    public String createGroup(Model model, @RequestBody CreateDocumentGroupRequest request) throws NotFoundException {
+    public String createGroup(Model model, @RequestBody @Valid CreateDocumentGroupRequest request)
+            throws NotFoundException {
         model.addAttribute("group", documentGroupService.addGroup(mapper.toDto(request)));
         return "groups";
     }
 
     @PutMapping("/update")
-    public String updateGroup(Model model, @RequestBody UpdateDocumentGroupRequest request) throws AccessException, NotFoundException {
+    public String updateGroup(Model model, @RequestBody @Valid UpdateDocumentGroupRequest request)
+            throws AccessException, NotFoundException {
         model.addAttribute("group", documentGroupService.updateGroup(mapper.toDto(request)));
         return "group";
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteGroup(@PathVariable("id") Long id) throws AccessException, NotFoundException {
+    public String deleteGroup(@PathVariable("id") @NotNull @Positive Long id)
+            throws AccessException, NotFoundException {
         documentGroupService.deleteGroup(id);
         return "groups";
     }

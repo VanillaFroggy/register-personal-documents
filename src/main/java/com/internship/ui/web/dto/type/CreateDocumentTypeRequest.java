@@ -1,7 +1,10 @@
 package com.internship.ui.web.dto.type;
 
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
+
 public record CreateDocumentTypeRequest(
-        String name,
-        int daysBeforeExpirationToWarnUser
+        @NotEmpty String name,
+        @Positive int daysBeforeExpirationToWarnUser
 ) {
 }

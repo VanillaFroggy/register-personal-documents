@@ -9,11 +9,15 @@ import com.internship.ui.web.dto.document.CreateDocumentRequest;
 import com.internship.ui.web.dto.document.UpdateDocumentRequest;
 import com.internship.ui.web.mapper.DocumentWebMapper;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @Controller
 @RequestMapping("/document")
 @RequiredArgsConstructor
@@ -26,9 +30,9 @@ public class DocumentController {
     @GetMapping("/getAllInGroup")
     public String getAllDocumentsInGroup(
             Model model,
-            @RequestParam("groupId") Long groupId,
-            @RequestParam("pageNumber") int pageNumber,
-            @RequestParam("pageSize") int pageSize,
+            @RequestParam("groupId") @NotNull @Positive Long groupId,
+            @RequestParam("pageNumber") @Min(0) @Max(50) int pageNumber,
+            @RequestParam("pageSize") @Positive int pageSize,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) {
         model.addAttribute(
@@ -53,7 +57,7 @@ public class DocumentController {
     @GetMapping("/get/{id}")
     public String getDocument(
             Model model,
-            @PathVariable("id") Long id,
+            @PathVariable("id") @NotNull @Positive Long id,
             @SessionAttribute("hasDocumentsToRenew") Boolean hasDocumentsToRenew
     ) throws AccessException, NotFoundException {
         model.addAttribute("document", documentService.getDocumentById(id));
@@ -64,7 +68,8 @@ public class DocumentController {
     }
 
     @PostMapping("/create")
-    public String createDocument(Model model, @RequestBody CreateDocumentRequest request) throws NotFoundException {
+    public String createDocument(Model model, @RequestBody @Valid CreateDocumentRequest request)
+            throws NotFoundException {
         model.addAttribute("document", documentService.addDocument(mapper.toDto(request)));
         return "documents";
     }
@@ -73,7 +78,7 @@ public class DocumentController {
     public String updateDocument(
             Model model,
             HttpSession session,
-            @RequestBody UpdateDocumentRequest request
+            @RequestBody @Valid UpdateDocumentRequest request
     ) throws AccessException, NotFoundException {
         model.addAttribute("document", documentService.updateDocument(mapper.toDto(request)));
         session.setAttribute("hasDocumentsToRenew", documentService.hasDocumentsToRenew());
@@ -81,7 +86,8 @@ public class DocumentController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteDocument(HttpSession session, @PathVariable("id") Long id) throws AccessException, NotFoundException {
+    public String deleteDocument(HttpSession session, @PathVariable("id") @NotNull @Positive Long id)
+            throws AccessException, NotFoundException {
         documentService.deleteDocument(id);
         session.setAttribute("hasDocumentsToRenew", documentService.hasDocumentsToRenew());
         return "documents";
