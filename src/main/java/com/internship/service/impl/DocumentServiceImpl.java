@@ -20,8 +20,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,10 +45,7 @@ public class DocumentServiceImpl implements DocumentService {
                 PageRequest.of(pageNumber, 100)
         );
         do {
-            if (documents.stream().anyMatch(document ->
-                    ChronoUnit.DAYS.between(document.getDateOfIssue(), document.getExpirationDate())
-                            <= document.getDocumentType().getDaysBeforeExpirationToWarnUser())
-            ) {
+            if (documents.stream().anyMatch(DocumentServiceImpl::shouldBeRenewed)) {
                 hasDocumentsToRenew = true;
                 break;
             }
@@ -83,15 +78,18 @@ public class DocumentServiceImpl implements DocumentService {
         do {
             documentsToRenew.addAll(
                     documents.stream()
-                            .filter(document ->
-                                    ChronoUnit.DAYS.between(document.getDateOfIssue(), document.getExpirationDate())
-                                            <= document.getDocumentType().getDaysBeforeExpirationToWarnUser())
+                            .filter(DocumentServiceImpl::shouldBeRenewed)
                             .map(mapper::toDto)
                             .toList()
             );
             documents = documentRepository.findAllByUserId(userId, PageRequest.of(++pageNumber, 1_000));
         } while (documents.hasContent() && !documents.isLast() && documentsToRenew.isEmpty());
         return documentsToRenew;
+    }
+
+    private static boolean shouldBeRenewed(Document document) {
+        return ChronoUnit.DAYS.between(document.getDateOfIssue(), document.getExpirationDate())
+                <= document.getDocumentType().getDaysBeforeExpirationToWarnUser();
     }
 
     @Override
@@ -105,17 +103,13 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public DocumentDto addDocument(CreateDocumentDto dto) throws NotFoundException {
-        Document document = Document.builder()
-                .title(dto.title())
-                .documentGroup(documentGroupRepository.findById(dto.documentGroupId())
-                        .orElseThrow(NotFoundException::new))
-                .documentType(documentTypeRepository.findById(dto.documentTypeId())
-                        .orElseThrow(NotFoundException::new))
-                .user(userRepository.findById(Utils.getCurrentUserId())
-                        .orElseThrow(NotFoundException::new))
-                .dateOfIssue(ZonedDateTime.now(ZoneOffset.UTC))
-                .expirationDate(dto.expirationDate().withZoneSameInstant(ZoneOffset.UTC))
-                .build();
+        Document document = mapper.toEntity(dto);
+        document.setDocumentType(documentTypeRepository.findById(dto.documentTypeId())
+                .orElseThrow(NotFoundException::new));
+        document.setDocumentGroup(documentGroupRepository.findById(dto.documentGroupId())
+                .orElseThrow(NotFoundException::new));
+        document.setUser(userRepository.findById(Utils.getCurrentUserId())
+                .orElseThrow(NotFoundException::new));
         documentRepository.save(document);
         return mapper.toDto(document);
     }
@@ -127,14 +121,10 @@ public class DocumentServiceImpl implements DocumentService {
         doesUserOwnDocument(document);
         User user = document.getUser();
         document = mapper.toEntity(dto);
-        document.setDocumentType(
-                documentTypeRepository.findById(dto.documentTypeId())
-                        .orElseThrow(NotFoundException::new)
-        );
-        document.setDocumentGroup(
-                documentGroupRepository.findById(dto.documentGroupId())
-                        .orElseThrow(NotFoundException::new)
-        );
+        document.setDocumentType(documentTypeRepository.findById(dto.documentTypeId())
+                        .orElseThrow(NotFoundException::new));
+        document.setDocumentGroup(documentGroupRepository.findById(dto.documentGroupId())
+                        .orElseThrow(NotFoundException::new));
         document.setUser(user);
         documentRepository.save(document);
         return mapper.toDto(document);

@@ -1,11 +1,13 @@
 package com.internship.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.proxy.HibernateProxy;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -14,40 +16,40 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "documents")
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "date_of_issue")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "date_of_issue", nullable = false)
     private ZonedDateTime dateOfIssue;
 
-    @Column(name = "expiration_date")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+    @Column(name = "expiration_date", nullable = false)
     private ZonedDateTime expirationDate;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "document_user_id_fkey"))
+    @JoinColumn(name = "user_id", nullable = false,
+            foreignKey = @ForeignKey(name = "document_user_id_fkey"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    @JoinColumn(name = "document_type_id", foreignKey = @ForeignKey(name = "document_document_type_id_fkey"))
+    @JoinColumn(name = "document_type_id", nullable = false,
+            foreignKey = @ForeignKey(name = "document_document_type_id_fkey"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocumentType documentType;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "document_group_id", foreignKey = @ForeignKey(name = "document_document_group_id_fkey"))
+    @JoinColumn(name = "document_group_id", nullable = false,
+            foreignKey = @ForeignKey(name = "document_document_group_id_fkey"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private DocumentGroup documentGroup;
 

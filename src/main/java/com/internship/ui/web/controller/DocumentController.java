@@ -68,9 +68,13 @@ public class DocumentController {
     }
 
     @PostMapping("/create")
-    public String createDocument(Model model, @RequestBody @Valid CreateDocumentRequest request)
-            throws NotFoundException {
+    public String createDocument(
+            Model model,
+            HttpSession session,
+            @RequestBody @Valid CreateDocumentRequest request
+    ) throws NotFoundException {
         model.addAttribute("document", documentService.addDocument(mapper.toDto(request)));
+        session.setAttribute("hasDocumentsToRenew", documentService.hasDocumentsToRenew());
         return "documents";
     }
 

@@ -1,7 +1,10 @@
 package com.internship.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.proxy.HibernateProxy;
@@ -12,22 +15,23 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "document_groups")
 public class DocumentGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String color;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "document_group_user_id", foreignKey = @ForeignKey(name = "document_group_user_id_fkey"))
+    @JoinColumn(name = "document_group_user_id", nullable = false,
+            foreignKey = @ForeignKey(name = "document_group_user_id_fkey"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
