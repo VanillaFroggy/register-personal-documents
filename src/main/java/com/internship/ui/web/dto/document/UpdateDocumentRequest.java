@@ -10,7 +10,7 @@ public record UpdateDocumentRequest(
         @Positive
         Long id,
 
-        @NotEmpty
+        @NotBlank
         String title,
 
         @NotNull

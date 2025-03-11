@@ -1,6 +1,6 @@
 package com.internship.ui.web.dto.group;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
@@ -9,10 +9,10 @@ public record UpdateDocumentGroupRequest(
         @Positive
         Long id,
 
-        @NotEmpty
+        @NotBlank
         String name,
 
-        @NotEmpty
+        @NotBlank
         String color
 ) {
 }

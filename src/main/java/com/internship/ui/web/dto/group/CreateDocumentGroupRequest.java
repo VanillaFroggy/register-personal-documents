@@ -1,9 +1,9 @@
 package com.internship.ui.web.dto.group;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 
 public record CreateDocumentGroupRequest(
-        @NotEmpty String name,
-        @NotEmpty String color
+        @NotBlank String name,
+        @NotBlank String color
 ) {
 }
