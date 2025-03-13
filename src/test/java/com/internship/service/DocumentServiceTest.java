@@ -66,7 +66,7 @@ class DocumentServiceTest {
 
     @Test
     void hasDocumentsToRenew_shouldReturnTrue_whenExists() {
-        int pageNumber = 0, pageSize = 100;
+        int pageNumber = 0, pageSize = 1_000;
         Document document = mock(Document.class);
         DocumentType documentType = mock(DocumentType.class);
         Page<Document> page = new PageImpl<>(List.of(document));
@@ -87,20 +87,16 @@ class DocumentServiceTest {
 
     @Test
     void hasDocumentsToRenew_shouldReturnFalse_whenDontExist() {
-        int pageNumber = 0, pageSize = 100;
+        int pageNumber = 0, pageSize = 1_000;
 
         try (MockedStatic<Utils> mockedUtils = Mockito.mockStatic(Utils.class)) {
             mockedUtils.when(Utils::getCurrentUserId).thenReturn(USER_ID);
             when(documentRepository.findAllByUserId(USER_ID, PageRequest.of(pageNumber, pageSize)))
                     .thenReturn(Page.empty());
-            when(documentRepository.findAllByUserId(USER_ID, PageRequest.of(pageNumber + 1, pageSize)))
-                    .thenReturn(Page.empty());
 
             assertFalse(documentService.hasDocumentsToRenew());
             verify(documentRepository, times(1))
                     .findAllByUserId(USER_ID, PageRequest.of(pageNumber, pageSize));
-            verify(documentRepository, times(1))
-                    .findAllByUserId(USER_ID, PageRequest.of(pageNumber + 1, pageSize));
         }
     }
 
@@ -167,8 +163,6 @@ class DocumentServiceTest {
             when(documentType.getDaysBeforeExpirationToWarnUser()).thenReturn(DAYS_BEFORE_EXPIRATION_TO_WARN_USER);
             when(documentRepository.findAllByUserId(USER_ID, PageRequest.of(pageNumber, pageSize))).thenReturn(page);
             when(mapper.toDto(document)).thenReturn(dto);
-            when(documentRepository.findAllByUserId(USER_ID, PageRequest.of(pageNumber + 1, pageSize)))
-                    .thenReturn(Page.empty());
 
             List<DocumentDto> actual = documentService.getAllDocumentsToRenew();
 
@@ -177,8 +171,6 @@ class DocumentServiceTest {
             assertEquals(dto, actual.getFirst());
             verify(documentRepository, times(1))
                     .findAllByUserId(USER_ID, PageRequest.of(pageNumber, pageSize));
-            verify(documentRepository, times(1))
-                    .findAllByUserId(USER_ID, PageRequest.of(pageNumber + 1, pageSize));
         }
     }
 
@@ -190,8 +182,6 @@ class DocumentServiceTest {
             mockedUtils.when(Utils::getCurrentUserId).thenReturn(USER_ID);
             when(documentRepository.findAllByUserId(USER_ID, PageRequest.of(pageNumber, pageSize)))
                     .thenReturn(Page.empty());
-            when(documentRepository.findAllByUserId(USER_ID, PageRequest.of(pageNumber + 1, pageSize)))
-                    .thenReturn(Page.empty());
 
             List<DocumentDto> actual = documentService.getAllDocumentsToRenew();
 
@@ -199,8 +189,6 @@ class DocumentServiceTest {
             assertTrue(actual.isEmpty());
             verify(documentRepository, times(1))
                     .findAllByUserId(USER_ID, PageRequest.of(pageNumber, pageSize));
-            verify(documentRepository, times(1))
-                    .findAllByUserId(USER_ID, PageRequest.of(pageNumber + 1, pageSize));
         }
     }
 

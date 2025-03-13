@@ -40,16 +40,13 @@ public class DocumentServiceImpl implements DocumentService {
         boolean hasDocumentsToRenew = false;
         int pageNumber = 0;
         Long userId = Utils.getCurrentUserId();
-        Page<Document> documents = documentRepository.findAllByUserId(
-                userId,
-                PageRequest.of(pageNumber, 100)
-        );
+        Page<Document> documents;
         do {
+            documents = documentRepository.findAllByUserId(userId, PageRequest.of(pageNumber++, 1_000));
             if (documents.stream().anyMatch(DocumentServiceImpl::shouldBeRenewed)) {
                 hasDocumentsToRenew = true;
                 break;
             }
-            documents = documentRepository.findAllByUserId(userId, PageRequest.of(++pageNumber, 100));
         } while (documents.hasContent() && !documents.isLast());
         return hasDocumentsToRenew;
     }
@@ -70,19 +67,16 @@ public class DocumentServiceImpl implements DocumentService {
     public List<DocumentDto> getAllDocumentsToRenew() {
         int pageNumber = 0;
         Long userId = Utils.getCurrentUserId();
-        Page<Document> documents = documentRepository.findAllByUserId(
-                userId,
-                PageRequest.of(pageNumber, 1_000)
-        );
+        Page<Document> documents;
         List<DocumentDto> documentsToRenew = new ArrayList<>();
         do {
+            documents = documentRepository.findAllByUserId(userId, PageRequest.of(pageNumber++, 1_000));
             documentsToRenew.addAll(
                     documents.stream()
                             .filter(DocumentServiceImpl::shouldBeRenewed)
                             .map(mapper::toDto)
                             .toList()
             );
-            documents = documentRepository.findAllByUserId(userId, PageRequest.of(++pageNumber, 1_000));
         } while (documents.hasContent() && !documents.isLast() && documentsToRenew.isEmpty());
         return documentsToRenew;
     }
@@ -122,9 +116,9 @@ public class DocumentServiceImpl implements DocumentService {
         User user = document.getUser();
         document = mapper.toEntity(dto);
         document.setDocumentType(documentTypeRepository.findById(dto.documentTypeId())
-                        .orElseThrow(NotFoundException::new));
+                .orElseThrow(NotFoundException::new));
         document.setDocumentGroup(documentGroupRepository.findById(dto.documentGroupId())
-                        .orElseThrow(NotFoundException::new));
+                .orElseThrow(NotFoundException::new));
         document.setUser(user);
         documentRepository.save(document);
         return mapper.toDto(document);
