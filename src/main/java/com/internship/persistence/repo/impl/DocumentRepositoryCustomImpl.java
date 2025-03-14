@@ -26,6 +26,7 @@ public class DocumentRepositoryCustomImpl implements DocumentRepositoryCustom {
                         .where(QDocument.document.user.id.eq(userId))
                         .limit(pageable.getPageSize())
                         .offset(pageable.getOffset())
+                        .orderBy(QDocument.document.expirationDate.asc())
                         .fetch(),
                 pageable,
                 new JPAQuery<Document>(entityManager)

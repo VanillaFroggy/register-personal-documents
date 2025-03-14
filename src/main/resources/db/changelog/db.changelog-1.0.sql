@@ -44,3 +44,4 @@ ALTER TABLE IF EXISTS users
 
 CREATE INDEX IF NOT EXISTS idx_documents_document_group_id ON documents (document_group_id);
 CREATE INDEX IF NOT EXISTS idx_documents_date_of_issue ON documents (date_of_issue);
+CREATE INDEX IF NOT EXISTS idx_documents_expiration_date ON documents (expiration_date);
